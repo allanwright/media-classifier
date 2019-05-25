@@ -1,3 +1,4 @@
+#%%
 import os
 import pandas as pd
 import requests
@@ -75,7 +76,7 @@ def get_raw_data():
         ['/sort-cat/Movies/seeders/desc/%s/', 'data/raw/movies/sitex%s.txt'],
         ['/sort-cat/Music/seeders/desc/%s/', 'data/raw/music/sitex%s.txt'],
         ['/sort-cat/TV/seeders/desc/%s/', 'data/raw/tv/sitex%s.txt'],
-        ['/sort-cat/Applications/seeders/desc/%s/', 'data/raw/apps/sitex%s.txt'],
+        ['/sort-cat/Apps/seeders/desc/%s/', 'data/raw/apps/sitex%s.txt'],
         ['/sort-cat/Games/seeders/desc/%s/', 'data/raw/games/sitex%s.txt']
     ]
 
