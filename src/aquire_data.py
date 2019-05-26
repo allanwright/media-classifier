@@ -1,4 +1,3 @@
-#%%
 import os
 import pandas as pd
 import requests
@@ -72,16 +71,18 @@ def get_raw_data():
         write_list_to_file(get_local_files(i[0]), i[1])
     
     site_x = [        
-        ['/sort-cat/Documentaries/seeders/desc/%s/', 'data/raw/docos/sitex%s.txt'],
-        ['/sort-cat/Movies/seeders/desc/%s/', 'data/raw/movies/sitex%s.txt'],
-        ['/sort-cat/Music/seeders/desc/%s/', 'data/raw/music/sitex%s.txt'],
-        ['/sort-cat/TV/seeders/desc/%s/', 'data/raw/tv/sitex%s.txt'],
-        ['/sort-cat/Apps/seeders/desc/%s/', 'data/raw/apps/sitex%s.txt'],
-        ['/sort-cat/Games/seeders/desc/%s/', 'data/raw/games/sitex%s.txt']
+        ['%s/Documentaries/seeders/desc/%s/', 'data/raw/docos/sitex%s.txt'],
+        ['%s/Movies/seeders/desc/%s/', 'data/raw/movies/sitex%s.txt'],
+        ['%s/Music/seeders/desc/%s/', 'data/raw/music/sitex%s.txt'],
+        ['%s/TV/seeders/desc/%s/', 'data/raw/tv/sitex%s.txt'],
+        ['%s/Apps/seeders/desc/%s/', 'data/raw/apps/sitex%s.txt'],
+        ['%s/Games/seeders/desc/%s/', 'data/raw/games/sitex%s.txt']
     ]
 
     for x in site_x:
         for y in range(1, 51):
-            write_list_to_file(get_site_x_files('https://site.x', x[0] % y), x[1] % y)
+            write_list_to_file(
+                get_site_x_files(
+                    'https://site.x', x[0] % ('/sort-cat', y)), x[1] % y)
 
 get_raw_data()
