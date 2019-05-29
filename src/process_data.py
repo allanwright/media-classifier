@@ -99,6 +99,15 @@ def process_data():
     # Remove duplicates by filename and category
     df.drop_duplicates(subset=['name', 'category'], inplace=True)
 
+    # Normalize word separators
+    df['name'] = df['name'].str.replace('.', ' ')
+    df['name'] = df['name'].str.replace('_', ' ')
+    df['name'] = df['name'].str.replace('-', ' ')
+    df['name'] = df['name'].str.replace('[', ' ')
+    df['name'] = df['name'].str.replace(']', ' ')
+    df['name'] = df['name'].str.replace('+', ' ')
+    df['name'] = df['name'].str.split().str.join(' ')
+
     df.to_csv('data/interim/combined.csv', index=False)
 
 process_data()
