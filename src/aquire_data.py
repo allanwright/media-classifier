@@ -70,19 +70,19 @@ def get_raw_data():
     for i in local:
         write_list_to_file(get_local_files(i[0]), i[1])
     
-    site_x = [        
-        ['%s/Documentaries/seeders/desc/%s/', 'data/raw/docos/sitex%s.txt'],
-        ['%s/Movies/seeders/desc/%s/', 'data/raw/movies/sitex%s.txt'],
-        ['%s/Music/seeders/desc/%s/', 'data/raw/music/sitex%s.txt'],
-        ['%s/TV/seeders/desc/%s/', 'data/raw/tv/sitex%s.txt'],
-        ['%s/Apps/seeders/desc/%s/', 'data/raw/apps/sitex%s.txt'],
-        ['%s/Games/seeders/desc/%s/', 'data/raw/games/sitex%s.txt']
+    site_x = [
+        ['%s/Documentaries/%s/', 'data/raw/docos/sitex%s.txt'],
+        ['%s/Music/%s/', 'data/raw/music/sitex%s.txt'],
+        ['%s/TV/%s/', 'data/raw/tv/sitex%s.txt'],
+        ['%s/Movies/%s/', 'data/raw/movies/sitex%s.txt'],
+        ['%s/Apps/%s/', 'data/raw/apps/sitex%s.txt'],
+        ['%s/Games/%s/', 'data/raw/games/sitex%s.txt']
     ]
 
     for x in site_x:
-        for y in range(1, 51):
+        for y in range(1, 151):
             write_list_to_file(
                 get_site_x_files(
-                    'https://site.x', x[0] % ('/sort-cat', y)), x[1] % y)
+                    'https://site.x', x[0] % ('/cat', y)), x[1] % y)
 
 get_raw_data()
