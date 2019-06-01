@@ -41,7 +41,6 @@ def process_data():
 
     #Merge categories
     df.loc[df['category'] == 'games', 'category'] = 'apps'
-    df.loc[df['category'] == 'docos', 'category'] = 'movies'
 
     # Create file extension column
     ext = df['name'].str.extract(r'\.(\w{3})$')
