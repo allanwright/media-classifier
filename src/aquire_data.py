@@ -38,12 +38,37 @@ def get_site_x_files(base_url, search_path):
     soup = BeautifulSoup(response.text, 'html.parser')
     anchors = soup.select('td.name a:nth-of-type(2)')
     for a in anchors:
-        print(a)
+        print('Scraping: %s' % a['href'])
         item_response = requests.get('%s%s' % (base_url, a['href']))
         item_soup = BeautifulSoup(item_response.text, 'html.parser')
         list_items = item_soup.select('#files li')
         for li in list_items:
             files.append(li.text)
+    return files
+
+def get_site_y_files(base_url, search_path):
+    '''Gets a list of files from website y.
+
+    Args:
+        base_url (string): The base url of the website.
+        search_path (string): The relative path to search for files.
+    
+    Returns:
+        list: The list of files.
+    '''
+    files = []
+    response = requests.get(base_url + search_path)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    anchors = soup.select('.tt-name a:nth-of-type(2)')
+    for a in anchors:
+        print('Scraping: %s' % a['href'])
+        item_response = requests.get('%s%s' % (base_url, a['href']))
+        item_soup = BeautifulSoup(item_response.text, 'html.parser')
+        list_items = item_soup.select('.fileline')
+        for li in list_items:
+            for s in li.text.split('\xa0'):
+                if s:
+                    files.append(s)
     return files
 
 def write_list_to_file(list, path):
@@ -58,7 +83,7 @@ def write_list_to_file(list, path):
             f.write('%s\n' % item)
 
 def get_raw_data():
-    local = [
+    """ local = [
         ['\\\\kraken//movie', 'data/raw/movies/kraken.txt'],
         ['\\\\kraken//music', 'data/raw/music/kraken.txt'],
         ['\\\\kraken//tv', 'data/raw/tv/kraken.txt'],
@@ -83,6 +108,18 @@ def get_raw_data():
         for y in range(1, 151):
             write_list_to_file(
                 get_site_x_files(
-                    'https://site.x', x[0] % ('/cat', y)), x[1] % y)
+                    'https://site.x', x[0] % ('/cat', y)), x[1] % y) """
+    
+    site_y = [
+        ['%s/Movies/date/%s/', 'data/raw/movies/sitey%s.txt'],
+        ['%s/Applications/date/%s/', 'data/raw/apps/sitey%s.txt'],
+        ['%s/Games/date/%s/', 'data/raw/movies/games%s.txt']
+    ]
+
+    for x in site_y:
+        for y in range(1, 501):
+            write_list_to_file(
+                get_site_y_files(
+                    'https://site.y', x[0] % ('/browse-torrents', y)), x[1] % y)
 
 get_raw_data()
