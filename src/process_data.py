@@ -31,7 +31,7 @@ def get_consolidated_raw_data(path):
 def process_data():
     '''Processes the raw data files.
     '''
-    df = get_consolidated_raw_data('data/raw')
+    df = get_consolidated_raw_data('../data/raw')
 
     # Remove commas from the name column
     df['name'] = df['name'].str.replace(',', '')
@@ -107,6 +107,6 @@ def process_data():
     df['name'] = df['name'].str.replace('+', ' ')
     df['name'] = df['name'].str.split().str.join(' ')
 
-    df.to_csv('data/interim/combined.csv', index=False)
+    df.to_csv('../data/interim/combined.csv', index=False)
 
 process_data()
