@@ -11,7 +11,8 @@
 	// "postCreateCommand": "python --version",
 
 	"extensions": [
-		"ms-python.python"
+        "ms-python.python",
+        "neuron.neuron-ipe"
 	],
 	"settings": {
 		"python.pythonPath": "/usr/local/bin/python",
