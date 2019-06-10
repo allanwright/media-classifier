@@ -5,6 +5,75 @@ import urllib.request
 import time
 from bs4 import BeautifulSoup
 
+def get_kraken_data(path):
+    '''Gets filenames from kraken and writes them to the raw data directory.
+
+    Args:
+        path (string): The base directory to search for files.
+    '''
+    paths = [
+        ['movie', 'data/raw/movies/kraken.txt'],
+        ['music', 'data/raw/music/kraken.txt'],
+        ['tv', 'data/raw/tv/kraken.txt']
+    ]
+
+    for i in paths:
+        write_list_to_file(get_local_files(path % i[0]), i[1])
+
+def get_pig_data(path):
+    '''Gets filenames from pig and writes them to the raw data directory.
+
+    Args:
+        path (string): The base directory to search for files.
+    '''
+    paths = [
+        ['Movies', 'data/raw/movies/pig.txt'],
+        ['Music', 'data/raw/music/pig.txt'],
+        ['TV Shows', 'data/raw/tv/pig.txt']
+    ]
+
+    for i in paths:
+        write_list_to_file(get_local_files(path % i[0]), i[1])
+
+def get_xerus_data(url):
+    '''Gets filenames from xerus and writes them to the raw data directory.
+
+    Args:
+        url (string): The base url to search for files.
+    '''
+    paths = [
+        ['%s/Documentaries/%s/', 'data/raw/docos/xerus%s.txt'],
+        ['%s/Music/%s/', 'data/raw/music/xerus%s.txt'],
+        ['%s/TV/%s/', 'data/raw/tv/xerus%s.txt'],
+        ['%s/Movies/%s/', 'data/raw/movies/xerus%s.txt'],
+        ['%s/Apps/%s/', 'data/raw/apps/xerus%s.txt'],
+        ['%s/Games/%s/', 'data/raw/games/xerus%s.txt']
+    ]
+
+    for x in paths:
+        for y in range(1, 151):
+            write_list_to_file(
+                get_xerus_files(
+                    url, x[0] % ('/cat', y)), x[1] % y)
+
+def get_yak_data(url):
+    '''Gets filenames from yak and writes them to the raw data directory.
+
+    Args:
+        url (string): The base url to search for files.
+    '''
+    site_y = [
+        ['%s/Movies/date/%s/', 'data/raw/movies/yak%s.txt'],
+        ['%s/Applications/date/%s/', 'data/raw/apps/yak%s.txt'],
+        ['%s/Games/date/%s/', 'data/raw/movies/yak%s.txt']
+    ]
+
+    for x in site_y:
+        for y in range(1, 501):
+            write_list_to_file(
+                get_yak_files(
+                    url, x[0] % ('/browse-torrents', y)), x[1] % y)
+
 def get_local_files(base_path):
     '''Gets a list of files in the specified directory and all sub-directories.
 
@@ -23,8 +92,8 @@ def get_local_files(base_path):
             files.append(file)
     return files
 
-def get_site_x_files(base_url, search_path):
-    '''Gets a list of files from website x.
+def get_xerus_files(base_url, search_path):
+    '''Gets a list of files from a website codenamed xerus.
 
     Args:
         base_url (string): The base url of the website.
@@ -46,8 +115,8 @@ def get_site_x_files(base_url, search_path):
             files.append(li.text)
     return files
 
-def get_site_y_files(base_url, search_path):
-    '''Gets a list of files from website y.
+def get_yak_files(base_url, search_path):
+    '''Gets a list of files from the website codenamed yak.
 
     Args:
         base_url (string): The base url of the website.
@@ -81,45 +150,3 @@ def write_list_to_file(list, path):
     with open(path, 'w', encoding='utf-8') as f:
         for item in list:
             f.write('%s\n' % item)
-
-def get_raw_data():
-    """ local = [
-        ['\\\\kraken//movie', 'data/raw/movies/kraken.txt'],
-        ['\\\\kraken//music', 'data/raw/music/kraken.txt'],
-        ['\\\\kraken//tv', 'data/raw/tv/kraken.txt'],
-        ['\\\\pig//Media//Movies', 'data/raw/movies/pigflix.txt'],
-        ['\\\\pig//Media//Music', 'data/raw/music/pigflix.txt'],
-        ['\\\\pig//Media//TV Shows', 'data/raw/tv/pigflix.txt']
-    ]
-
-    for i in local:
-        write_list_to_file(get_local_files(i[0]), i[1])
-    
-    site_x = [
-        ['%s/Documentaries/%s/', 'data/raw/docos/sitex%s.txt'],
-        ['%s/Music/%s/', 'data/raw/music/sitex%s.txt'],
-        ['%s/TV/%s/', 'data/raw/tv/sitex%s.txt'],
-        ['%s/Movies/%s/', 'data/raw/movies/sitex%s.txt'],
-        ['%s/Apps/%s/', 'data/raw/apps/sitex%s.txt'],
-        ['%s/Games/%s/', 'data/raw/games/sitex%s.txt']
-    ]
-
-    for x in site_x:
-        for y in range(1, 151):
-            write_list_to_file(
-                get_site_x_files(
-                    'https://site.x', x[0] % ('/cat', y)), x[1] % y) """
-    
-    site_y = [
-        ['%s/Movies/date/%s/', 'data/raw/movies/sitey%s.txt'],
-        ['%s/Applications/date/%s/', 'data/raw/apps/sitey%s.txt'],
-        ['%s/Games/date/%s/', 'data/raw/movies/games%s.txt']
-    ]
-
-    for x in site_y:
-        for y in range(1, 501):
-            write_list_to_file(
-                get_site_y_files(
-                    'https://site.y', x[0] % ('/browse-torrents', y)), x[1] % y)
-
-get_raw_data()
