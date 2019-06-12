@@ -130,14 +130,18 @@ def get_yak_files(base_url, search_path):
     soup = BeautifulSoup(response.text, 'html.parser')
     anchors = soup.select('.tt-name a:nth-of-type(2)')
     for a in anchors:
-        print('Scraping: %s' % a['href'])
-        item_response = requests.get('%s%s' % (base_url, a['href']))
-        item_soup = BeautifulSoup(item_response.text, 'html.parser')
-        list_items = item_soup.select('.fileline')
-        for li in list_items:
-            for s in li.text.split('\xa0'):
-                if s:
-                    files.append(s)
+        try:
+            print('Scraping: {href}'.format(href=a['href']))
+            item_response = requests.get('{url}{href}'
+                .format(url=base_url, href=a['href']))
+            item_soup = BeautifulSoup(item_response.text, 'html.parser')
+            list_items = item_soup.select('.fileline')
+            for li in list_items:
+                for s in li.text.split('\xa0'):
+                    if s:
+                        files.append(s)
+        except UnicodeEncodeError:
+            print('Skipping: Url contains non ascii chars')
     return files
 
 def write_list_to_file(list, path):
