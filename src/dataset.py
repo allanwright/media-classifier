@@ -1,3 +1,4 @@
+import http
 import os
 import pandas as pd
 import requests
@@ -65,7 +66,7 @@ def get_yak_data(url):
     site_y = [
         ['%s/Movies/date/%s/', 'data/raw/movies/yak%s.txt'],
         ['%s/Applications/date/%s/', 'data/raw/apps/yak%s.txt'],
-        ['%s/Games/date/%s/', 'data/raw/movies/yak%s.txt']
+        ['%s/Games/date/%s/', 'data/raw/games/yak%s.txt']
     ]
 
     for x in site_y:
@@ -130,18 +131,23 @@ def get_yak_files(base_url, search_path):
     soup = BeautifulSoup(response.text, 'html.parser')
     anchors = soup.select('.tt-name a:nth-of-type(2)')
     for a in anchors:
-        try:
-            print('Scraping: {href}'.format(href=a['href']))
-            item_response = requests.get('{url}{href}'
-                .format(url=base_url, href=a['href']))
-            item_soup = BeautifulSoup(item_response.text, 'html.parser')
-            list_items = item_soup.select('.fileline')
-            for li in list_items:
-                for s in li.text.split('\xa0'):
-                    if s:
-                        files.append(s)
-        except UnicodeEncodeError:
-            print('Skipping: Url contains non ascii chars')
+        while True:
+            try:
+                print('Scraping: {href}'.format(href=a['href']))
+                item_response = requests.get('{url}{href}'
+                    .format(url=base_url, href=a['href']))
+                item_soup = BeautifulSoup(item_response.text, 'html.parser')
+                list_items = item_soup.select('.fileline')
+                for li in list_items:
+                    for s in li.text.split('\xa0'):
+                        if s:
+                            files.append(s)
+                break
+            except http.client.RemoteDisconnected:
+                print('Retrying: Remote host disconnected')
+            except UnicodeEncodeError:
+                print('Skipping: Url contains non ascii chars')
+                break
     return files
 
 def write_list_to_file(list, path):
