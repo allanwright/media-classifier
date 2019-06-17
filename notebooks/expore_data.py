@@ -9,3 +9,10 @@ print(df.head(20))
 
 #%% Display category distribution
 sns.countplot(x='category', data=df)
+
+#%% Display word count distribution
+df['word_count'] = df['name'].str.split().apply(len)
+sns.distplot(df['word_count'], kde=False,
+    bins=range(1, 26))
+
+#%%

@@ -31,6 +31,9 @@ def main():
             dataset.get_yak_data(os.getenv('YAK_URL'))
         else:
             print('Invalid source')
+    
+    if arguments['process']:
+        dataset.process_data()
 
     """ if arguments['train']:
         train_model(arguments['<dataset-dir>'],
