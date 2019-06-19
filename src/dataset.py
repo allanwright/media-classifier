@@ -5,6 +5,7 @@ import requests
 import urllib.request
 import time
 from bs4 import BeautifulSoup
+from sklearn.utils import resample
 
 def get_kraken_data(path):
     '''Gets filenames from kraken and writes them to the raw data directory.
@@ -274,4 +275,16 @@ def process_data():
     # Remove rubbish characters
     df['name'] = df['name'].str.strip('`~!@#$%^&*()-_+=[]|;:<>,./?')
 
+    # Save interim output before processing further
     df.to_csv('data/interim/combined.csv', index=False)
+
+    # Downsample to fix class imbalance
+    categories = [df[df.category == c] for c in df.category.unique()]
+    sample_size = min([len(c) for c in categories])
+    downsampled = [resample(c,
+                            replace=False,
+                            n_samples=sample_size,
+                            random_state=123) for c in categories]
+    df = pd.concat(downsampled)
+
+    df.to_csv('data/interim/balanced.csv', index=False)

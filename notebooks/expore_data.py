@@ -1,8 +1,9 @@
 #%% Import modules and read dataset
 import pandas as pd
 import seaborn as sns
+from sklearn.utils import resample
 
-df = pd.read_csv('data/interim/combined.csv')
+df = pd.read_csv('data/interim/balanced.csv')
 
 #%% Display top x rows
 print(df.head(20))
