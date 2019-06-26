@@ -1,15 +1,11 @@
 ## Introduction
-Media-Classifier is a recurrant neural network trained to classify media based on filename.
+Media-Classifier is a text classification project designed to classify media based on filename.
 
 ## Environment Setup
-The development environment currently consists of a locally installed conda environment but will be moved to a docker container soon.  Run the following command to create the conda environment:
+Development is performed inside a docker container using the Visual Studio Code Remote - Container extension.  Once the dev container has been built, follow these steps to complete the setup (this will hopefully be automated soon):
 
 ```shell
-conda env create -f env.yml
-```
-
-Then activate the environment like so:
-
-```shell
-conda activate media-classifier
+pip install --upgrade pip && \
+conda env update --file workspace/environment.yml && \
+python setup.py install
 ```
