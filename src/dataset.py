@@ -287,4 +287,5 @@ def process_data():
                             random_state=123) for c in categories]
     df = pd.concat(downsampled)
 
+    # Save interim output before processing further
     df.to_csv('data/interim/balanced.csv', index=False)

@@ -13,10 +13,11 @@ Arguments:
 import os
 from docopt import docopt
 from dotenv import load_dotenv
-from src import dataset
+from src import dataset, train
 
 def main():
-    load_dotenv()
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+    load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
     arguments = docopt(__doc__)
 
     if arguments['aquire']:
@@ -34,6 +35,9 @@ def main():
     
     if arguments['process']:
         dataset.process_data()
+    
+    if arguments['train']:
+        train.train_model()
 
     """ if arguments['train']:
         train_model(arguments['<dataset-dir>'],
