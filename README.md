@@ -9,3 +9,17 @@ pip install --upgrade pip && \
 conda env update --file workspace/environment.yml && \
 python setup.py install
 ```
+
+## Command Line Interface
+Media-Classifier has a CLI for executing all required steps in training the text classification model.
+
+```shell
+Usage:
+    mc aquire <source>  Downloads raw data from the specified source.
+    mc process          Processes the raw data.
+    mc train            Trains the model.
+    mc eval             Evaluates the model.
+
+Arguments:
+    <source>    Source to aquire data from (pig, kraken, xerus, yak)
+```
