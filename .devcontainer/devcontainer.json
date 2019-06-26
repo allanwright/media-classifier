@@ -1,6 +1,6 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
-	"name": "Python 3",
+	"name": "CNTK Python3.5",
 	"context": "..",
 	"dockerFile": "Dockerfile",
 
@@ -8,14 +8,14 @@
 	// "appPort": [],
 
 	// Uncomment the next line to run commands after the container is created.
-	// "postCreateCommand": "python --version",
+    // "postCreateCommand": "python3 --version",
 
 	"extensions": [
         "ms-python.python",
         "neuron.neuron-ipe"
 	],
 	"settings": {
-		"python.pythonPath": "/usr/local/bin/python",
+		"python.pythonPath": "/opt/conda/bin/python",
 		"python.linting.pylintEnabled": true,
 		"python.linting.enabled": true
 	}
