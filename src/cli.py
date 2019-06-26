@@ -1,10 +1,10 @@
 '''Media-Classifier CLI
 
 Usage:
-    mc-cli aquire <source>
-    mc-cli process
-    mc-cli train
-    mc-cli eval
+    mc aquire <source>
+    mc process
+    mc train
+    mc eval
 
 Arguments:
     <source>    Source to aquire data from (pig, kraken, xerus, yak)
