@@ -2,7 +2,7 @@ name: cntk-py35
 dependencies:
   - python=3.5
   - pip:
-    - pandas
+    - pandas==0.24.*
     - keras
     - docopt
     - python-dotenv
