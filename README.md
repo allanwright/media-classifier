@@ -2,11 +2,7 @@
 Media-Classifier is a text classification project designed to classify media based on filename.
 
 ## Environment Setup
-Development is performed inside a docker container using the Visual Studio Code Remote - Container extension.  Once the dev container has been built, execute the follow command from the shell:
-
-```shell
-python setup.py install
-```
+Development is performed inside a docker container using the Visual Studio Code Remote - Container extension.  Just open the project folder in the dev container and the environment will be fully setup automatically.
 
 ## Command Line Interface
 Media-Classifier has a CLI for executing all required steps in training the text classification model.
