@@ -1,8 +1,7 @@
-import keras as K
+import tensorflow as tf
 
 def train_model():
     '''Trains the model.
 
     '''
-    print('test')
-    print(K.__version__)
+    print(tf.__version__)
