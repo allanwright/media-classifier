@@ -301,7 +301,7 @@ def process_data():
 
     # Perform train test data split
     category_columns = [c for c in df.columns if c.startswith('category_')]
-    train, test = model_selection.train_test_split(df, test_size=0.2)
+    train, test = model_selection.train_test_split(df, test_size=0.2, random_state=123)
     x_train = train.drop(category_columns, axis=1)
     y_train = train[category_columns]
     x_test = test.drop(category_columns, axis=1)
