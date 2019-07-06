@@ -5,3 +5,5 @@ python-dotenv
 bs4
 requests
 sklearn
+jupyter
+seaborn

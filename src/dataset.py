@@ -5,6 +5,7 @@ import requests
 import urllib.request
 import time
 from bs4 import BeautifulSoup
+from sklearn import model_selection
 from sklearn.utils import resample
 
 def get_kraken_data(path):
@@ -289,3 +290,25 @@ def process_data():
 
     # Save interim output before processing further
     df.to_csv('data/interim/balanced.csv', index=False)
+
+    # One hot encode category column
+    categories = pd.get_dummies(df['category'], prefix='category')
+    df = pd.concat([df, categories], sort=True, axis=1)
+    df.drop('category', axis=1, inplace=True)
+
+    # Save final output before splitting
+    df.to_csv('data/interim/final.csv', index=False)
+
+    # Perform train test data split
+    category_columns = [c for c in df.columns if c.startswith('category_')]
+    train, test = model_selection.train_test_split(df, test_size=0.2)
+    x_train = train.drop(category_columns, axis=1)
+    y_train = train[category_columns]
+    x_test = test.drop(category_columns, axis=1)
+    y_test = test[category_columns]
+
+    # Save train and test data
+    x_train.to_csv('data/processed/x_train.csv', index=False)
+    y_train.to_csv('data/processed/y_train.csv', index=False)
+    x_test.to_csv('data/processed/x_test.csv', index=False)
+    y_test.to_csv('data/processed/y_test.csv', index=False)
