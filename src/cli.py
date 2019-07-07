@@ -3,11 +3,12 @@
 Usage:
     mc aquire <source>
     mc process
-    mc train
+    mc train <model>
     mc eval
 
 Arguments:
     <source>    Source to aquire data from (pig, kraken, xerus, yak)
+    <model>     Model to train (baseline)
 
 '''
 import os
@@ -37,16 +38,9 @@ def main():
         dataset.process_data()
     
     if arguments['train']:
-        train.train_model()
-
-    """ if arguments['train']:
-        train_model(arguments['<dataset-dir>'],
-                    arguments['<model-file>'],
-                    int(arguments['--vocab-size'])
-        )
-    elif arguments['ask']:
-        ask_model(arguments['<model-file>'],
-                  arguments['<question>']) """
+        model = arguments['<model>']
+        if model == 'baseline':
+            train.train_baseline()
 
 if __name__ == '__main__':
     main()

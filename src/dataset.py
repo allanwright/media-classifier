@@ -6,6 +6,7 @@ import urllib.request
 import time
 from bs4 import BeautifulSoup
 from sklearn import model_selection
+from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import resample
 
 def get_kraken_data(path):
@@ -292,23 +293,34 @@ def process_data():
     df.to_csv('data/interim/balanced.csv', index=False)
 
     # One hot encode category column
-    categories = pd.get_dummies(df['category'], prefix='category')
-    df = pd.concat([df, categories], sort=True, axis=1)
-    df.drop('category', axis=1, inplace=True)
+    one_hot_encoded_categories = pd.get_dummies(df['category'], prefix='category')
+    df = pd.concat([df, one_hot_encoded_categories], sort=True, axis=1)
+
+    # Ordinal encode category column
+    labelEncoder = LabelEncoder()
+    labelEncoder.fit(df.category.unique())
+    df['category_ordinal_encoded'] = labelEncoder.transform(df['category'])
 
     # Save final output before splitting
     df.to_csv('data/interim/final.csv', index=False)
 
+    # Drop unencoded category column
+    df.drop('category', axis=1, inplace=True)
+
     # Perform train test data split
-    category_columns = [c for c in df.columns if c.startswith('category_')]
+    category_columns = [c for c in df.columns if c.startswith('category_') and c != 'category_ordinal_encoded']
     train, test = model_selection.train_test_split(df, test_size=0.2, random_state=123)
     x_train = train.drop(category_columns, axis=1)
-    y_train = train[category_columns]
+    y_train_one_hot_encoded = train[category_columns]
+    y_train_ordinal_encoded = train['category_ordinal_encoded']
     x_test = test.drop(category_columns, axis=1)
-    y_test = test[category_columns]
+    y_test_one_hot_encoded = test[category_columns]
+    y_test_ordinal_encoded = test['category_ordinal_encoded']
 
     # Save train and test data
     x_train.to_csv('data/processed/x_train.csv', index=False)
-    y_train.to_csv('data/processed/y_train.csv', index=False)
+    y_train_one_hot_encoded.to_csv('data/processed/y_train_one_hot_encoded.csv', index=False)
+    y_train_ordinal_encoded.to_csv('data/processed/y_train_ordinal_encoded.csv', index=False, header=True)
     x_test.to_csv('data/processed/x_test.csv', index=False)
-    y_test.to_csv('data/processed/y_test.csv', index=False)
+    y_test_one_hot_encoded.to_csv('data/processed/y_test_one_hot_encoded.csv', index=False)
+    y_test_ordinal_encoded.to_csv('data/processed/y_test_ordinal_encoded.csv', index=False, header=True)
