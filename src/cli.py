@@ -4,17 +4,17 @@ Usage:
     mc aquire <source>
     mc process
     mc train <model>
-    mc eval
+    mc eval <model> <filename>
 
 Arguments:
     <source>    Source to aquire data from (pig, kraken, xerus, yak)
     <model>     Model to train (baseline)
-
+    <filename>  The filename to evaluate
 '''
 import os
 from docopt import docopt
 from dotenv import load_dotenv
-from src import dataset, train
+from src import dataset, train, inference
 
 def main():
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -33,14 +33,17 @@ def main():
             dataset.get_yak_data(os.getenv('YAK_URL'))
         else:
             print('Invalid source')
-    
-    if arguments['process']:
-        dataset.process_data()
-    
-    if arguments['train']:
+    elif arguments['process']:
+        dataset.process_data()    
+    elif arguments['train']:
         model = arguments['<model>']
         if model == 'baseline':
             train.train_baseline()
+    elif arguments['eval']:
+        model = arguments['<model>']
+        filename = arguments['<filename>']
+        if model == 'baseline':
+            inference.eval_baseline_model(filename)
 
 if __name__ == '__main__':
     main()
