@@ -14,7 +14,8 @@ Arguments:
 import os
 from docopt import docopt
 from dotenv import load_dotenv
-from src import dataset, train, inference
+from src import dataset
+from src.models import baseline
 
 def main():
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -38,12 +39,12 @@ def main():
     elif arguments['train']:
         model = arguments['<model>']
         if model == 'baseline':
-            train.train_baseline()
+            baseline.train()
     elif arguments['eval']:
         model = arguments['<model>']
         filename = arguments['<filename>']
         if model == 'baseline':
-            inference.eval_baseline_model(filename)
+            baseline.eval(filename)
 
 if __name__ == '__main__':
     main()
