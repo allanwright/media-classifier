@@ -316,9 +316,11 @@ def process_data():
     category_columns = [c for c in df.columns if c.startswith('category_') and c != 'category_ordinal_encoded']
     train, test = model_selection.train_test_split(df, test_size=0.2, random_state=123)
     x_train = train.drop(category_columns, axis=1)
+    x_train = x_train.drop('category_ordinal_encoded', axis=1)
     y_train_one_hot_encoded = train[category_columns]
     y_train_ordinal_encoded = train['category_ordinal_encoded']
     x_test = test.drop(category_columns, axis=1)
+    x_test = x_test.drop('category_ordinal_encoded', axis=1)
     y_test_one_hot_encoded = test[category_columns]
     y_test_ordinal_encoded = test['category_ordinal_encoded']
 
