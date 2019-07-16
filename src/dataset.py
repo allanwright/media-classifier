@@ -1,6 +1,7 @@
 import http
 import os
 import pandas as pd
+import progressbar as pb
 import requests
 import urllib.request
 import time
@@ -161,8 +162,7 @@ def write_list_to_file(list, path):
         path (string): The file to write to.
     '''
     with open(path, 'w', encoding='utf-8') as f:
-        for item in list:
-            f.write('%s\n' % item)
+        [f.write('%s\n' % item) for item in list]
 
 def get_consolidated_raw_data(path):
     '''Gets a pandas dataframe containing the contents of all raw data files.
@@ -180,14 +180,14 @@ def get_consolidated_raw_data(path):
     for x in os.listdir(path):
         x_path = '%s/%s' % (path, x)
         if os.path.isdir(x_path):
-            for y in os.listdir(x_path):
+            print('Consolidating {path}'.format(path=x_path))
+            for y in pb.progressbar(os.listdir(x_path)):
                 y_path = '%s/%s/%s' % (path, x, y)
                 if os.path.isfile(y_path):
-                    print('Processing %s' % y_path)
                     series = pd.read_csv(y_path, sep='\t', squeeze=True)
-                    df = pd.DataFrame()
-                    df['name'] = series
-                    df['category'] = x
+                    df = pd.DataFrame(data={'name': series, 'category': x})
+                    #df['name'] = series
+                    #df['category'] = x
                     consolidated = consolidated.append(df, ignore_index=True)
     return consolidated
 
@@ -195,6 +195,8 @@ def process_data():
     '''Processes the raw data files.
     '''
     df = get_consolidated_raw_data('data/raw')
+
+    print('Processing data')
 
     # Remove commas from the name column
     df['name'] = df['name'].str.replace(',', '')
@@ -281,6 +283,7 @@ def process_data():
     df.to_csv('data/interim/combined.csv', index=False)
 
     # Downsample to fix class imbalance
+    print('Balancing classes')
     categories = [df[df.category == c] for c in df.category.unique()]
     sample_size = min([len(c) for c in categories])
     downsampled = [resample(c,
@@ -293,6 +296,7 @@ def process_data():
     df.to_csv('data/interim/balanced.csv', index=False)
 
     # One hot encode category column
+    print('Encoding labels')
     one_hot_encoded_categories = pd.get_dummies(df['category'], prefix='category')
     df = pd.concat([df, one_hot_encoded_categories], sort=True, axis=1)
 
@@ -308,6 +312,7 @@ def process_data():
     df.drop('category', axis=1, inplace=True)
 
     # Perform train test data split
+    print('Splitting data')
     category_columns = [c for c in df.columns if c.startswith('category_') and c != 'category_ordinal_encoded']
     train, test = model_selection.train_test_split(df, test_size=0.2, random_state=123)
     x_train = train.drop(category_columns, axis=1)
@@ -318,6 +323,7 @@ def process_data():
     y_test_ordinal_encoded = test['category_ordinal_encoded']
 
     # Save train and test data
+    print('Saving data')
     x_train.to_csv('data/processed/x_train.csv', index=False)
     y_train_one_hot_encoded.to_csv('data/processed/y_train_one_hot_encoded.csv', index=False)
     y_train_ordinal_encoded.to_csv('data/processed/y_train_ordinal_encoded.csv', index=False, header=True)

@@ -7,3 +7,4 @@ requests
 sklearn
 jupyter
 seaborn
+progressbar2
