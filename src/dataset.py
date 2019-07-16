@@ -196,7 +196,7 @@ def process_data():
     '''
     df = get_consolidated_raw_data('data/raw')
 
-    print('Processing data')
+    printProgress('Processing data', df)
 
     # Remove commas from the name column
     df['name'] = df['name'].str.replace(',', '')
@@ -283,7 +283,7 @@ def process_data():
     df.to_csv('data/interim/combined.csv', index=False)
 
     # Downsample to fix class imbalance
-    print('Balancing classes')
+    printProgress('Balancing classes', df)
     categories = [df[df.category == c] for c in df.category.unique()]
     sample_size = min([len(c) for c in categories])
     downsampled = [resample(c,
@@ -296,7 +296,7 @@ def process_data():
     df.to_csv('data/interim/balanced.csv', index=False)
 
     # One hot encode category column
-    print('Encoding labels')
+    printProgress('Encoding labels', df)
     one_hot_encoded_categories = pd.get_dummies(df['category'], prefix='category')
     df = pd.concat([df, one_hot_encoded_categories], sort=True, axis=1)
 
@@ -312,7 +312,7 @@ def process_data():
     df.drop('category', axis=1, inplace=True)
 
     # Perform train test data split
-    print('Splitting data')
+    printProgress('Splitting data', df)
     category_columns = [c for c in df.columns if c.startswith('category_') and c != 'category_ordinal_encoded']
     train, test = model_selection.train_test_split(df, test_size=0.2, random_state=123)
     x_train = train.drop(category_columns, axis=1)
@@ -325,10 +325,13 @@ def process_data():
     y_test_ordinal_encoded = test['category_ordinal_encoded']
 
     # Save train and test data
-    print('Saving data')
+    printProgress('Saving data', df)
     x_train.to_csv('data/processed/x_train.csv', index=False)
     y_train_one_hot_encoded.to_csv('data/processed/y_train_one_hot_encoded.csv', index=False)
     y_train_ordinal_encoded.to_csv('data/processed/y_train_ordinal_encoded.csv', index=False, header=True)
     x_test.to_csv('data/processed/x_test.csv', index=False)
     y_test_one_hot_encoded.to_csv('data/processed/y_test_one_hot_encoded.csv', index=False)
     y_test_ordinal_encoded.to_csv('data/processed/y_test_ordinal_encoded.csv', index=False, header=True)
+
+def printProgress(message, df):
+    print('{message} ({rows} rows)'.format(message=message, rows=df.shape[0]))
