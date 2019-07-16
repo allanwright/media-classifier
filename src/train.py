@@ -19,11 +19,7 @@ def train_baseline():
     vectorizer = CountVectorizer()
     vectorizer.fit(x_train)
 
-    print(x_train[0])
     x_train = vectorizer.transform(x_train)
-    print(x_train[0])
-    print(x_train.shape)
-
     x_test = vectorizer.transform(x_test)
 
     max_iterations = 200
@@ -50,7 +46,7 @@ def train_baseline():
 
 def read_x_data(name):
     df = read_data(name)
-    df = df['name']
+    df = df['name'].map(str) + ' ' + df['ext']
     return df.to_numpy()
 
 def read_y_data(name):
