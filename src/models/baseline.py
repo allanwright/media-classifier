@@ -14,9 +14,6 @@ def train():
     x_test = read_data('x_test.csv')
     y_test = read_data('y_test.csv')
 
-    #y_train = np.ravel(y_train)
-    #y_test = np.ravel(y_test)
-
     labelEncoder = LabelEncoder()
     labelEncoder.fit(y_train)
     y_train = labelEncoder.transform(y_train)
@@ -48,13 +45,6 @@ def train():
     dump(classifier, 'models/baseline/model.joblib')
 
     print('Saved model to models/baseline/model.joblib')
-
-""" def read_x_data(name):
-    df = read_data(name)
-    return np.ravel(df.to_numpy())
-
-def read_y_data(name):
-    return read_data(name) """
 
 def read_data(name):
     df = pd.read_csv('data/processed/' + name, header=None)
