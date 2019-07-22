@@ -3,22 +3,27 @@ import pandas as pd
 from joblib import dump, load
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import LabelEncoder
 
 def train():
     '''Trains the baseline model.
 
     '''
-    x_train = read_x_data('x_train.csv')
-    y_train = read_y_data('y_train_ordinal_encoded.csv')
-    x_test = read_x_data('x_test.csv')
-    y_test = read_y_data('y_test_ordinal_encoded.csv')
+    x_train = read_data('x_train.csv')
+    y_train = read_data('y_train.csv')
+    x_test = read_data('x_test.csv')
+    y_test = read_data('y_test.csv')
 
-    y_train = np.ravel(y_train)
-    y_test = np.ravel(y_test)
+    #y_train = np.ravel(y_train)
+    #y_test = np.ravel(y_test)
+
+    labelEncoder = LabelEncoder()
+    labelEncoder.fit(y_train)
+    y_train = labelEncoder.transform(y_train)
+    y_test = labelEncoder.transform(y_test)
 
     vectorizer = CountVectorizer()
     vectorizer.fit(x_train)
-
     x_train = vectorizer.transform(x_train)
     x_test = vectorizer.transform(x_test)
 
@@ -39,21 +44,21 @@ def train():
 
     print('Baseline model accuracy: {accuracy}'.format(accuracy=score))
 
-    dump(vectorizer, 'models/baseline_vectorizer.joblib')
-    dump(classifier, 'models/baseline_model.joblib')
+    dump(vectorizer, 'models/baseline/vectorizer.joblib')
+    dump(classifier, 'models/baseline/model.joblib')
 
-    print('Saved model to models/baseline.joblib')
+    print('Saved model to models/baseline/model.joblib')
 
-def read_x_data(name):
+""" def read_x_data(name):
     df = read_data(name)
-    df = df['name'].map(str) + ' ' + df['ext']
-    return df.to_numpy()
+    return np.ravel(df.to_numpy())
 
 def read_y_data(name):
-    return read_data(name).to_numpy()
+    return read_data(name) """
 
 def read_data(name):
-    return pd.read_csv('data/processed/' + name)
+    df = pd.read_csv('data/processed/' + name, header=None)
+    return np.ravel(df.to_numpy())
 
 def eval(filename):
     ''' Evaluates the baseline model.
@@ -61,10 +66,10 @@ def eval(filename):
     Args:
         input (filename): The filename to evaluate.
     '''
-    vectorizer = load('models/baseline_vectorizer.joblib')
+    vectorizer = load('models/baseline/vectorizer.joblib')
     x = process_input(filename)
     x = vectorizer.transform(np.array([x]))
-    classifier = load('models/baseline_model.joblib')
+    classifier = load('models/baseline/model.joblib')
     y = classifier.predict_proba(x)
     np.set_printoptions(suppress=True)
     print(y)

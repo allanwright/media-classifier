@@ -279,6 +279,10 @@ def process_data():
     # Remove rubbish characters
     df['name'] = df['name'].str.strip('`~!@#$%^&*()-_+=[]|;:<>,./?')
 
+    # Append extension to name column then drop extension column
+    df['name'] = df['name'].map(str) + ' ' + df['ext']
+    df = df.drop('ext', axis=1)
+
     # Save interim output before processing further
     df.to_csv('data/interim/combined.csv', index=False)
 
@@ -292,46 +296,23 @@ def process_data():
                             random_state=123) for c in categories]
     df = pd.concat(downsampled)
 
-    # Save interim output before processing further
-    df.to_csv('data/interim/balanced.csv', index=False)
-
-    # One hot encode category column
-    printProgress('Encoding labels', df)
-    one_hot_encoded_categories = pd.get_dummies(df['category'], prefix='category')
-    df = pd.concat([df, one_hot_encoded_categories], sort=True, axis=1)
-
-    # Ordinal encode category column
-    labelEncoder = LabelEncoder()
-    labelEncoder.fit(df.category.unique())
-    df['category_ordinal_encoded'] = labelEncoder.transform(df['category'])
-
     # Save final output before splitting
     df.to_csv('data/interim/final.csv', index=False)
 
-    # Drop unencoded category column
-    df.drop('category', axis=1, inplace=True)
-
     # Perform train test data split
     printProgress('Splitting data', df)
-    category_columns = [c for c in df.columns if c.startswith('category_') and c != 'category_ordinal_encoded']
     train, test = model_selection.train_test_split(df, test_size=0.2, random_state=123)
-    x_train = train.drop(category_columns, axis=1)
-    x_train = x_train.drop('category_ordinal_encoded', axis=1)
-    y_train_one_hot_encoded = train[category_columns]
-    y_train_ordinal_encoded = train['category_ordinal_encoded']
-    x_test = test.drop(category_columns, axis=1)
-    x_test = x_test.drop('category_ordinal_encoded', axis=1)
-    y_test_one_hot_encoded = test[category_columns]
-    y_test_ordinal_encoded = test['category_ordinal_encoded']
+    x_train = train.drop('category', axis=1)
+    y_train = train['category']
+    x_test = test.drop('category', axis=1)
+    y_test = test['category']
 
     # Save train and test data
     printProgress('Saving data', df)
-    x_train.to_csv('data/processed/x_train.csv', index=False)
-    y_train_one_hot_encoded.to_csv('data/processed/y_train_one_hot_encoded.csv', index=False)
-    y_train_ordinal_encoded.to_csv('data/processed/y_train_ordinal_encoded.csv', index=False, header=True)
-    x_test.to_csv('data/processed/x_test.csv', index=False)
-    y_test_one_hot_encoded.to_csv('data/processed/y_test_one_hot_encoded.csv', index=False)
-    y_test_ordinal_encoded.to_csv('data/processed/y_test_ordinal_encoded.csv', index=False, header=True)
+    x_train.to_csv('data/processed/x_train.csv', index=False, header=False)
+    y_train.to_csv('data/processed/y_train.csv', index=False, header=False)
+    x_test.to_csv('data/processed/x_test.csv', index=False, header=False)
+    y_test.to_csv('data/processed/y_test.csv', index=False, header=False)
 
 def printProgress(message, df):
     print('{message} ({rows} rows)'.format(message=message, rows=df.shape[0]))
