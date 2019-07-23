@@ -8,3 +8,4 @@ sklearn
 jupyter
 seaborn
 progressbar2
+rope

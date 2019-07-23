@@ -8,14 +8,14 @@ Usage:
 
 Arguments:
     <source>    Source to aquire data from (pig, kraken, xerus, yak)
-    <model>     Model to train (baseline)
+    <model>     Model to train/evaluate (baseline, cnn)
     <filename>  The filename to evaluate
 '''
 import os
 from docopt import docopt
 from dotenv import load_dotenv
 from src import dataset
-from src.models import baseline
+from src.models import baseline, cnn
 
 def main():
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -40,11 +40,15 @@ def main():
         model = arguments['<model>']
         if model == 'baseline':
             baseline.train()
+        elif model == 'cnn':
+            cnn.train()
     elif arguments['eval']:
         model = arguments['<model>']
         filename = arguments['<filename>']
         if model == 'baseline':
             baseline.eval(filename)
+        elif model == 'cnn':
+            cnn.eval(filename)
 
 if __name__ == '__main__':
     main()
