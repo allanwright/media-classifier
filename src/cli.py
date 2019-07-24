@@ -14,7 +14,7 @@ Arguments:
 import os
 from docopt import docopt
 from dotenv import load_dotenv
-from src import datasets
+from src import datasets, preprocessing
 from src.models import baseline, cnn
 
 def main():
@@ -35,7 +35,7 @@ def main():
         else:
             print('Invalid source')
     elif arguments['process']:
-        datasets.process_data()    
+        preprocessing.process_data()
     elif arguments['train']:
         model = arguments['<model>']
         if model == 'baseline':
