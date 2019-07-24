@@ -14,7 +14,7 @@ Arguments:
 import os
 from docopt import docopt
 from dotenv import load_dotenv
-from src import dataset
+from src import datasets
 from src.models import baseline, cnn
 
 def main():
@@ -25,17 +25,17 @@ def main():
     if arguments['aquire']:
         source = arguments['<source>']
         if source == 'kraken':
-            dataset.get_kraken_data(os.getenv('KRAKEN_PATH'))
+            datasets.get_kraken_data(os.getenv('KRAKEN_PATH'))
         elif source == 'pig':
-            dataset.get_pig_data(os.getenv('PIG_PATH'))
+            datasets.get_pig_data(os.getenv('PIG_PATH'))
         elif source == 'xerus':
-            dataset.get_xerus_data(os.getenv('XERUS_URL'))
+            datasets.get_xerus_data(os.getenv('XERUS_URL'))
         elif source == 'yak':
-            dataset.get_yak_data(os.getenv('YAK_URL'))
+            datasets.get_yak_data(os.getenv('YAK_URL'))
         else:
             print('Invalid source')
     elif arguments['process']:
-        dataset.process_data()    
+        datasets.process_data()    
     elif arguments['train']:
         model = arguments['<model>']
         if model == 'baseline':
