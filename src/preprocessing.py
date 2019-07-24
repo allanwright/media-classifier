@@ -60,44 +60,11 @@ def process_data():
     df['name'] = df['name'].str.split('/').str[-1]
     
     # Remove junk filenames
-    music_ext = [
-        'mp3',
-        'm4a',
-        'ogg',
-        'flac',
-        'wav'
-    ]
-
-    movie_ext = [
-        'mp4',
-        'mkv',
-        'avi',
-        'wmv',
-        'mpg',
-        'm4v'
-    ]
-
-    tv_ext = [
-        'mp4',
-        'mkv',
-        'avi',
-        'wmv',
-        'mpg',
-        'm4v'
-    ]
-
-    app_ext = [
-        'exe',
-        'bin',
-        'zip',
-        'rar',
-        'iso',
-        'cab',
-        'dll',
-        'msi',
-        'dmg',
-        'dat'
-    ]
+    music_ext = [ 'mp3', 'm4a', 'ogg', 'flac', 'wav' ]
+    movie_ext = [ 'mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v' ]
+    tv_ext = [ 'mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v' ]
+    app_ext = [ 'exe', 'bin', 'zip', 'rar', 'iso',
+                'cab', 'dll', 'msi', 'dmg', 'dat' ]
 
     df = df[((df['category'] == 'music') & (df['ext'].isin(music_ext))) |
             ((df['category'] == 'movies') & (df['ext'].isin(movie_ext))) |
