@@ -1,5 +1,7 @@
 import http
 import os
+import numpy as np
+import pandas as pd
 import requests
 import urllib.request
 import time
@@ -158,3 +160,24 @@ def write_list_to_file(list, path):
     '''
     with open(path, 'w', encoding='utf-8') as f:
         [f.write('%s\n' % item) for item in list]
+
+def get_train_test_data():
+    '''Reads the processed and split train/test data.
+
+    Returns:
+        x_train (numpy array): The training features.
+        y_train (nunmpy array): The training labels.
+        x_test (numpy array): The test features.
+        y_test (numpy array): The test labels.
+    '''
+    return (
+        get_processed_data('x_train.csv'),
+        get_processed_data('y_train.csv'),
+        get_processed_data('x_test.csv'),
+        get_processed_data('y_test.csv')
+    )
+
+
+def get_processed_data(name):
+    df = pd.read_csv('data/processed/' + name, header=None)
+    return np.ravel(df.to_numpy())

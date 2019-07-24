@@ -15,6 +15,7 @@ from tensorflow.python.keras.layers import GlobalAveragePooling1D
 from tensorflow.python.keras.preprocessing import sequence
 from tensorflow.python.keras.preprocessing import text
 from sklearn.preprocessing import LabelEncoder
+from src import datasets
 
 def train():
     '''Trains a separable cnn model.
@@ -41,10 +42,7 @@ def train():
     pool_size = 3
     num_classes = 4 # TODO: Compute number of classes
 
-    x_train = read_data('x_train.csv')
-    y_train = read_data('y_train.csv')
-    x_test = read_data('x_test.csv')
-    y_test = read_data('y_test.csv')
+    x_train, y_train, x_test, y_test = datasets.get_train_test_data()
 
     tokenizer = text.Tokenizer(num_words=top_k)
     tokenizer.fit_on_texts(x_train)
@@ -129,10 +127,6 @@ def eval(filename):
     y = model.predict_classes(x)
     print(y)
     print('0 = app, 1 = movie, 2 = music, 3 = tv')
-
-def read_data(name):
-    df = pd.read_csv('data/processed/' + name, header=None)
-    return np.ravel(df.to_numpy())
 
 def _get_last_layer_units_and_activation(num_classes):
     """Gets the # units and activation function for the last network layer.

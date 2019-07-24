@@ -4,15 +4,13 @@ from joblib import dump, load
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import LabelEncoder
+from src import datasets
 
 def train():
     '''Trains the baseline model.
 
     '''
-    x_train = read_data('x_train.csv')
-    y_train = read_data('y_train.csv')
-    x_test = read_data('x_test.csv')
-    y_test = read_data('y_test.csv')
+    x_train, y_train, x_test, y_test = datasets.get_train_test_data()
 
     labelEncoder = LabelEncoder()
     labelEncoder.fit(y_train)
@@ -45,10 +43,6 @@ def train():
     dump(classifier, 'models/baseline/model.joblib')
 
     print('Saved model to models/baseline/model.joblib')
-
-def read_data(name):
-    df = pd.read_csv('data/processed/' + name, header=None)
-    return np.ravel(df.to_numpy())
 
 def eval(filename):
     ''' Evaluates the baseline model.
