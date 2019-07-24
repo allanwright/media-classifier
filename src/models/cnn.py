@@ -16,6 +16,7 @@ from tensorflow.python.keras.preprocessing import sequence
 from tensorflow.python.keras.preprocessing import text
 from sklearn.preprocessing import LabelEncoder
 from src import datasets
+from src import preprocessing
 
 def train():
     '''Trains a separable cnn model.
@@ -115,7 +116,7 @@ def eval(filename):
         input (filename): The filename to evaluate.
     '''
     tokenizer = load('models/cnn/tokenizer.joblib')
-    x = process_input(filename)
+    x = preprocessing.process_filename(filename)
     print(x)
     x = tokenizer.texts_to_sequences([x])
     print(x)
@@ -224,31 +225,3 @@ def sepcnn_model(blocks,
     model.add(Dropout(rate=dropout_rate))
     model.add(Dense(op_units, activation=op_activation))
     return model
-
-def process_input(filename):
-    # Remove commas
-    filename = filename.replace(',', '')
-
-    # Remove file sizes
-    filename = filename.replace(r'\s{1}\(.+\)$', '')
-    filename = filename.replace(r' - \S+\s{1}\S+$', '')
-
-    # Remove file extension
-    filename = filename.replace(r'\.(\w{3})$', '')
-    
-    # Remove paths
-    filename = filename.split('/')[-1]
-
-    # Normalize word separators
-    filename = filename.replace('.', ' ')
-    filename = filename.replace('_', ' ')
-    filename = filename.replace('-', ' ')
-    filename = filename.replace('[', ' ')
-    filename = filename.replace(']', ' ')
-    filename = filename.replace('+', ' ')
-    filename = ' '.join(filename.split())
-
-    # Remove rubbish characters
-    filename = filename.strip('`~!@#$%^&*()-_+=[]|;:<>,./?')
-
-    return filename

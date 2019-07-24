@@ -5,6 +5,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import LabelEncoder
 from src import datasets
+from src import preprocessing
 
 def train():
     '''Trains the baseline model.
@@ -51,7 +52,7 @@ def eval(filename):
         input (filename): The filename to evaluate.
     '''
     vectorizer = load('models/baseline/vectorizer.joblib')
-    x = process_input(filename)
+    x = preprocessing.process_filename(filename)
     x = vectorizer.transform(np.array([x]))
     classifier = load('models/baseline/model.joblib')
     y = classifier.predict_proba(x)
@@ -68,31 +69,3 @@ def eval(filename):
         print('music')
     elif y == 3:
         print('tv')
-
-def process_input(filename):
-    # Remove commas
-    filename = filename.replace(',', '')
-
-    # Remove file sizes
-    filename = filename.replace(r'\s{1}\(.+\)$', '')
-    filename = filename.replace(r' - \S+\s{1}\S+$', '')
-
-    # Remove file extension
-    filename = filename.replace(r'\.(\w{3})$', '')
-    
-    # Remove paths
-    filename = filename.split('/')[-1]
-
-    # Normalize word separators
-    filename = filename.replace('.', ' ')
-    filename = filename.replace('_', ' ')
-    filename = filename.replace('-', ' ')
-    filename = filename.replace('[', ' ')
-    filename = filename.replace(']', ' ')
-    filename = filename.replace('+', ' ')
-    filename = ' '.join(filename.split())
-
-    # Remove rubbish characters
-    filename = filename.strip('`~!@#$%^&*()-_+=[]|;:<>,./?')
-
-    return filename

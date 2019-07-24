@@ -154,5 +154,35 @@ def process_data():
     x_test.to_csv('data/processed/x_test.csv', index=False, header=False)
     y_test.to_csv('data/processed/y_test.csv', index=False, header=False)
 
+def process_filename(filename):
+    '''Processes a filename in preparation for classification by a model.
+    '''
+    # Remove commas
+    filename = filename.replace(',', '')
+
+    # Remove file sizes
+    filename = filename.replace(r'\s{1}\(.+\)$', '')
+    filename = filename.replace(r' - \S+\s{1}\S+$', '')
+
+    # Remove file extension
+    filename = filename.replace(r'\.(\w{3})$', '')
+    
+    # Remove paths
+    filename = filename.split('/')[-1]
+
+    # Normalize word separators
+    filename = filename.replace('.', ' ')
+    filename = filename.replace('_', ' ')
+    filename = filename.replace('-', ' ')
+    filename = filename.replace('[', ' ')
+    filename = filename.replace(']', ' ')
+    filename = filename.replace('+', ' ')
+    filename = ' '.join(filename.split())
+
+    # Remove rubbish characters
+    filename = filename.strip('`~!@#$%^&*()-_+=[]|;:<>,./?')
+
+    return filename
+
 def printProgress(message, df):
     print('{message} ({rows} rows)'.format(message=message, rows=df.shape[0]))
