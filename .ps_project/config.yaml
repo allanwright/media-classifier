@@ -16,7 +16,7 @@ model: #[optional, but required for model parsing and model deployments]
   path: "/path/to/model"
 
 worker:
-  container: "tensorflow/tensorflow:2.0.0-gpu"
+  container: "tensorflow/tensorflow:2.0.0b1-gpu-py3"
   command: "nvidia-smi"
   machine-type: "K80"
   count:
