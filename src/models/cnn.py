@@ -14,7 +14,6 @@ from tensorflow.python.keras.layers import MaxPooling1D
 from tensorflow.python.keras.layers import GlobalAveragePooling1D
 from tensorflow.python.keras.preprocessing import sequence
 from tensorflow.python.keras.preprocessing import text
-from sklearn.preprocessing import LabelEncoder
 from src import datasets
 from src import preprocessing
 
@@ -58,11 +57,6 @@ def train():
     
     x_train = sequence.pad_sequences(x_train, maxlen=max_length)
     x_test = sequence.pad_sequences(x_test, maxlen=max_length)
-
-    labelEncoder = LabelEncoder()
-    labelEncoder.fit(y_train)
-    y_train = labelEncoder.transform(y_train)
-    y_test = labelEncoder.transform(y_test)
 
     # Create model instance.
     model = sepcnn_model(

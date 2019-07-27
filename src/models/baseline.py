@@ -3,7 +3,6 @@ import pandas as pd
 from joblib import dump, load
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import LabelEncoder
 from src import datasets
 from src import preprocessing
 
@@ -12,11 +11,6 @@ def train():
 
     '''
     x_train, y_train, x_test, y_test = datasets.get_train_test_data()
-
-    labelEncoder = LabelEncoder()
-    labelEncoder.fit(y_train)
-    y_train = labelEncoder.transform(y_train)
-    y_test = labelEncoder.transform(y_test)
 
     vectorizer = CountVectorizer()
     vectorizer.fit(x_train)

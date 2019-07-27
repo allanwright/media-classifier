@@ -1,8 +1,10 @@
+import json
 import os
 import pandas as pd
 import progressbar as pb
 from sklearn import model_selection
 from sklearn.utils import resample
+from sklearn.preprocessing import LabelEncoder
 
 def get_consolidated_raw_data(path):
     '''Gets a pandas dataframe containing the contents of all raw data files.
@@ -102,6 +104,21 @@ def process_data():
                             n_samples=sample_size,
                             random_state=123) for c in categories]
     df = pd.concat(downsampled)
+
+    # Encode labels
+    labelEncoder = LabelEncoder()
+    labelEncoder.fit(df['category'])
+    df['category'] = labelEncoder.transform(df['category'])
+
+    # Save label encoding
+    category_ids = df.category.unique()
+    category_names = labelEncoder.inverse_transform(category_ids)
+    category_dict = {}
+    for i in range(len(category_ids)):
+        category_dict[category_names[i]] = int(category_ids[i])
+    category_json = json.dumps(category_dict)
+    with open('data/processed/label_encoding.json', 'w') as json_file:
+        json_file.write(category_json)
 
     # Save final output before splitting
     df.to_csv('data/interim/final.csv', index=False)
