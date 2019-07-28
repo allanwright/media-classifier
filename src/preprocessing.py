@@ -115,7 +115,7 @@ def process_data():
     category_names = labelEncoder.inverse_transform(category_ids)
     category_dict = {}
     for i in range(len(category_ids)):
-        category_dict[category_names[i]] = int(category_ids[i])
+        category_dict[int(category_ids[i])] = category_names[i]
     category_json = json.dumps(category_dict)
     with open('data/processed/label_encoding.json', 'w') as json_file:
         json_file.write(category_json)

@@ -4,6 +4,7 @@ from joblib import dump, load
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from src import datasets
+from src import infer
 from src import preprocessing
 
 def train():
@@ -11,14 +12,12 @@ def train():
 
     '''
     x_train, y_train, x_test, y_test = datasets.get_train_test_data()
-
     vectorizer = CountVectorizer()
     vectorizer.fit(x_train)
     x_train = vectorizer.transform(x_train)
     x_test = vectorizer.transform(x_test)
 
     max_iterations = 200
-
     classifier = LogisticRegression(
         solver='lbfgs', multi_class='multinomial', max_iter=max_iterations)
     
@@ -43,7 +42,7 @@ def eval(filename):
     ''' Evaluates the baseline model.
 
     Args:
-        input (filename): The filename to evaluate.
+        filenanme (string): The filename to evaluate.
     '''
     vectorizer = load('models/baseline/vectorizer.joblib')
     x = preprocessing.process_filename(filename)
@@ -51,15 +50,6 @@ def eval(filename):
     classifier = load('models/baseline/model.joblib')
     y = classifier.predict_proba(x)
     np.set_printoptions(suppress=True)
-    print(y)
-
-    y = np.argmax(y)
-
-    if y == 0:
-        print('app')
-    elif y == 1:
-        print('movie')
-    elif y == 2:
-        print('music')
-    elif y == 3:
-        print('tv')
+    label, confidence = infer.get_label(y)
+    print('Predicted class \'{label}\' with {confidence:.2f}% confidence.'
+        .format(label=label, confidence=confidence*100))

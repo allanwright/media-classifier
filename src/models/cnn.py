@@ -15,6 +15,7 @@ from tensorflow.python.keras.layers import GlobalAveragePooling1D
 from tensorflow.python.keras.preprocessing import sequence
 from tensorflow.python.keras.preprocessing import text
 from src import datasets
+from src import infer
 from src import preprocessing
 
 def train():
@@ -43,7 +44,6 @@ def train():
     num_classes = 4 # TODO: Compute number of classes
 
     x_train, y_train, x_test, y_test = datasets.get_train_test_data()
-
     tokenizer = text.Tokenizer(num_words=top_k)
     tokenizer.fit_on_texts(x_train)
     dump(tokenizer, 'models/cnn/tokenizer.joblib')
@@ -111,17 +111,13 @@ def eval(filename):
     '''
     tokenizer = load('models/cnn/tokenizer.joblib')
     x = preprocessing.process_filename(filename)
-    print(x)
     x = tokenizer.texts_to_sequences([x])
-    print(x)
     x = sequence.pad_sequences(x, 25)
-
-    print(x)
-
     model = tf.keras.models.load_model('models/cnn/model.h5')
-    y = model.predict_classes(x)
-    print(y)
-    print('0 = app, 1 = movie, 2 = music, 3 = tv')
+    y = model.predict_proba(x)
+    label, confidence = infer.get_label(y)
+    print('Predicted class \'{label}\' with {confidence:.2f}% confidence.'
+        .format(label=label, confidence=confidence*100))
 
 def _get_last_layer_units_and_activation(num_classes):
     """Gets the # units and activation function for the last network layer.
