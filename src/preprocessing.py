@@ -28,8 +28,6 @@ def get_consolidated_raw_data(path):
                 if os.path.isfile(y_path):
                     series = pd.read_csv(y_path, sep='\t', squeeze=True)
                     df = pd.DataFrame(data={'name': series, 'category': x})
-                    #df['name'] = series
-                    #df['category'] = x
                     consolidated = consolidated.append(df, ignore_index=True)
     return consolidated
 
@@ -43,12 +41,15 @@ def process_data():
     # Remove commas from the name column
     df['name'] = df['name'].str.replace(',', '')
 
+    # Lowercase all names
+    df['name'] = df['name'].str.lower()
+
     # Remove file sizes from the end of filenames
     df['name'] = df['name'].str.replace(r'\s{1}\(.+\)$', '')
     df['name'] = df['name'].str.replace(r' - \S+\s{1}\S+$', '')
 
     #Merge categories
-    df.loc[df['category'] == 'games', 'category'] = 'apps'
+    df.loc[df['category'] == 'game', 'category'] = 'app'
 
     # Create file extension column
     ext = df['name'].str.extract(r'\.(\w{3})$')
@@ -69,9 +70,9 @@ def process_data():
                 'cab', 'dll', 'msi', 'dmg', 'dat' ]
 
     df = df[((df['category'] == 'music') & (df['ext'].isin(music_ext))) |
-            ((df['category'] == 'movies') & (df['ext'].isin(movie_ext))) |
+            ((df['category'] == 'movie') & (df['ext'].isin(movie_ext))) |
             ((df['category'] == 'tv') & (df['ext'].isin(tv_ext))) |
-            ((df['category'] == 'apps') & (df['ext'].isin(app_ext)))]
+            ((df['category'] == 'app') & (df['ext'].isin(app_ext)))]
     
     # Remove duplicates by filename and category
     df.drop_duplicates(subset=['name', 'category'], inplace=True)
@@ -143,6 +144,9 @@ def process_filename(filename):
     '''
     # Remove commas
     filename = filename.replace(',', '')
+
+    # Lowercase filename
+    filename = filename.lower()
 
     # Remove file sizes
     filename = filename.replace(r'\s{1}\(.+\)$', '')

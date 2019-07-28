@@ -44,12 +44,12 @@ def get_xerus_data(url):
         url (string): The base url to search for files.
     '''
     paths = [
-        ['%s/Documentaries/%s/', 'data/raw/docos/xerus%s.txt'],
+        ['%s/Documentaries/%s/', 'data/raw/doco/xerus%s.txt'],
         ['%s/Music/%s/', 'data/raw/music/xerus%s.txt'],
         ['%s/TV/%s/', 'data/raw/tv/xerus%s.txt'],
-        ['%s/Movies/%s/', 'data/raw/movies/xerus%s.txt'],
-        ['%s/Apps/%s/', 'data/raw/apps/xerus%s.txt'],
-        ['%s/Games/%s/', 'data/raw/games/xerus%s.txt']
+        ['%s/Movies/%s/', 'data/raw/movie/xerus%s.txt'],
+        ['%s/Apps/%s/', 'data/raw/app/xerus%s.txt'],
+        ['%s/Games/%s/', 'data/raw/game/xerus%s.txt']
     ]
 
     for x in paths:
@@ -65,9 +65,9 @@ def get_yak_data(url):
         url (string): The base url to search for files.
     '''
     site_y = [
-        ['%s/Movies/date/%s/', 'data/raw/movies/yak%s.txt'],
-        ['%s/Applications/date/%s/', 'data/raw/apps/yak%s.txt'],
-        ['%s/Games/date/%s/', 'data/raw/games/yak%s.txt']
+        ['%s/Movies/date/%s/', 'data/raw/movie/yak%s.txt'],
+        ['%s/Applications/date/%s/', 'data/raw/app/yak%s.txt'],
+        ['%s/Games/date/%s/', 'data/raw/game/yak%s.txt']
     ]
 
     for x in site_y:
