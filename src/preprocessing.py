@@ -87,7 +87,8 @@ def process_data():
     df['name'] = df['name'].str.split().str.join(' ')
 
     # Remove rubbish characters
-    df['name'] = df['name'].str.strip('`~!@#$%^&*()-_+=[]|;:<>,./?')
+    for c in '`~!@#$%^&*()-_+=[]|;:<>,./?\'':
+        df['name'] = df['name'].str.replace(c, '')
 
     # Append extension to name column then drop extension column
     df['name'] = df['name'].map(str) + ' ' + df['ext']
