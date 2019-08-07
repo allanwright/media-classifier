@@ -6,41 +6,28 @@ df = pd.read_csv('data/interim/combined.csv')
 print(df.head())
 
 #%%
-# Create a numpy array with a length equal to the number of words in the sentence
-df['label'] = df['name'].apply(lambda x: np.zeros(len(x.split())))
+new_df = pd.DataFrame(df['name'].str.split().tolist(), index=df.index).stack()
+print(new_df.shape)
+print(new_df.head())
+
+#%%
+new_df.to_csv('data/interim/entity_classification.csv', index=True)
 
 # Define entity classes by type
 # SHARED
-# file extension
-# na
+# na, file extension
 
 # APP
-# name
-# version
+# name, version
 
 # MOVIE
-# name
-# resolution
-# encoding
-# uploader
+# name, resolution, encoding, uploader
 
 # MUSIC
-# artist name
-# album name
-# track name
-# track number
-# bitrate
+# artist name, album name, track name, track number, bitrate
 
 # TV
-# show name
-# episode name
-# season number
-# episode number
-# resolution
-# encoding
-# uploader
-
-#%%
-df.to_csv('data/interim/entity_classification.csv', index=False)
+# show name, episode name, season number, episode number, resolution
+# encoding, uploader
 
 #%%
