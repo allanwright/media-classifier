@@ -12,7 +12,7 @@ def get_label(proba):
         esimate (float): The probability estimate.
     '''
     label_json = ''
-    with open('data/processed/label_encoding.json', 'r') as json_file:
+    with open('data/processed/label_dictionary.json', 'r') as json_file:
         label_json = json_file.read()    
     labels = json.loads(label_json)
     return (labels[str(np.argmax(proba))], np.max(proba))

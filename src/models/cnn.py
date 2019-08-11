@@ -47,6 +47,9 @@ def train():
     tokenizer = text.Tokenizer(num_words=top_k)
     tokenizer.fit_on_texts(x_train)
     dump(tokenizer, 'models/cnn/tokenizer.joblib')
+    preprocessing.dictToJson(
+        tokenizer.word_index,
+        'data/processed/token_dictionary.json')
 
     x_train = tokenizer.texts_to_sequences(x_train)
     x_test = tokenizer.texts_to_sequences(x_test)
