@@ -6,6 +6,27 @@ from sklearn import model_selection
 from sklearn.utils import resample
 from sklearn.preprocessing import LabelEncoder
 
+def clean_workspace():
+    '''Removes all processed data and models from the workspace.
+
+    '''
+    paths = [
+        'data/interim',
+        'data/processed',
+        'models/baseline',
+        'models/cnn'
+    ]
+
+    for path in paths:
+        delete_files_from_dir(path)
+
+def delete_files_from_dir(path):
+    print('Cleaning {path}'.format(path=path))
+    for i in pb.progressbar(os.listdir(path)):
+        file_path = path + '/' + i
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+
 def get_consolidated_raw_data(path):
     '''Gets a pandas dataframe containing the contents of all raw data files.
 
