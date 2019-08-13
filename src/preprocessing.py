@@ -20,13 +20,6 @@ def clean_workspace():
     for path in paths:
         delete_files_from_dir(path)
 
-def delete_files_from_dir(path):
-    print('Cleaning {path}'.format(path=path))
-    for i in pb.progressbar(os.listdir(path)):
-        file_path = path + '/' + i
-        if os.path.isfile(file_path):
-            os.remove(file_path)
-
 def get_consolidated_raw_data(path):
     '''Gets a pandas dataframe containing the contents of all raw data files.
 
@@ -202,6 +195,14 @@ def dictToJson(dict, path):
     dict_json = json.dumps(dict)
     with open(path, 'w') as json_file:
         json_file.write(dict_json)
+
+def delete_files_from_dir(path):
+    exclusions = ['.gitignore', '.gitkeep']
+    print('Cleaning {path}'.format(path=path))
+    for i in pb.progressbar(os.listdir(path)):
+        file_path = path + '/' + i
+        if os.path.isfile(file_path) and i not in exclusions:
+            os.remove(file_path)
 
 def printProgress(message, df):
     print('{message} ({rows} rows)'.format(message=message, rows=df.shape[0]))
