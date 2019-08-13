@@ -1,18 +1,20 @@
 #%%
 import numpy as np
 import pandas as pd
+import re
 
-df = pd.read_csv('data/interim/combined.csv')
-
-#%%
-df = pd.DataFrame(df['name'].str.split().tolist(), index=df.index).stack()
-df = df.reset_index([0, 1])
-df.columns = ['index', 'pos', 'word']
-df['entity'] = ''
-print(df.head())
+df = pd.read_csv('data/interim/stacked.csv')
 
 #%%
-df.loc[df.word.str.contains('^s\d+e\d+$'), 'entity'] = 'season_episode'
+def split_season_episode(name):
+    match = re.search(r'(?P<sid>s\d+)(?P<eid>e\d+)', name)
+    if match != None:
+        name = name.replace(
+            match.group(0),
+            match.group('sid') + ' ' + match.group('eid'))
+    return name
+
+print(split_season_episode('Game.of.Thrones.s01e01.mp4'))
+print(split_season_episode('TEST'))
 
 #%%
-df.to_csv('data/interim/entity_classification.csv', index=False)

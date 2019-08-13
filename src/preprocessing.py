@@ -2,9 +2,9 @@ import json
 import os
 import pandas as pd
 import progressbar as pb
+import re
 from sklearn import model_selection
 from sklearn.utils import resample
-from sklearn.preprocessing import LabelEncoder
 
 def clean_workspace():
     '''Removes all processed data and models from the workspace.
@@ -33,9 +33,10 @@ def get_consolidated_raw_data(path):
         DataFrame: The contents of all raw data files.
     '''
     consolidated = pd.DataFrame()
+    paths = ['movie', 'tv']
     for x in os.listdir(path):
         x_path = '%s/%s' % (path, x)
-        if os.path.isdir(x_path):
+        if os.path.isdir(x_path) and x in paths:
             print('Consolidating {path}'.format(path=x_path))
             for y in pb.progressbar(os.listdir(x_path)):
                 y_path = '%s/%s/%s' % (path, x, y)
@@ -77,16 +78,11 @@ def process_data():
     df['name'] = df['name'].str.split('/').str[-1]
     
     # Remove junk filenames
-    music_ext = [ 'mp3', 'm4a', 'ogg', 'flac', 'wav' ]
     movie_ext = [ 'mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v' ]
     tv_ext = [ 'mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v' ]
-    app_ext = [ 'exe', 'bin', 'zip', 'rar', 'iso',
-                'cab', 'dll', 'msi', 'dmg', 'dat' ]
 
-    df = df[((df['category'] == 'music') & (df['ext'].isin(music_ext))) |
-            ((df['category'] == 'movie') & (df['ext'].isin(movie_ext))) |
-            ((df['category'] == 'tv') & (df['ext'].isin(tv_ext))) |
-            ((df['category'] == 'app') & (df['ext'].isin(app_ext)))]
+    df = df[((df['category'] == 'movie') & (df['ext'].isin(movie_ext))) |
+            ((df['category'] == 'tv') & (df['ext'].isin(tv_ext)))]
     
     # Remove duplicates by filename and category
     df.drop_duplicates(subset=['name', 'category'], inplace=True)
@@ -108,10 +104,44 @@ def process_data():
     df['name'] = df['name'].map(str) + ' ' + df['ext']
     df = df.drop('ext', axis=1)
 
+    # Split combined season and episode numbers
+    df['name'] = df['name'].apply(split_season_episode)
+
     # Save interim output before processing further
     df.to_csv('data/interim/combined.csv', index=False)
 
-    # Downsample to fix class imbalance
+    # Split the filename into individual words then stack the DataFrame
+    df = pd.DataFrame(df['name'].str.split().tolist(), index=[df.index, df.category]).stack()
+    df = df.reset_index()
+    df.columns = ['index', 'category', 'pos', 'word']
+
+    # Add entity column
+    df['entity'] = ''
+
+    # Label file extension
+    df.loc[(df['word'].isin(movie_ext)) & (df.category == 'movie'), 'entity'] = 'ext'
+    df.loc[(df['word'].isin(tv_ext)) & (df.category == 'tv'), 'entity'] = 'ext'
+
+    # Label resolution
+    resolutions = ['576p', '720p', '1080p', '2160p', '4k']
+    df.loc[df['word'].isin(resolutions), 'entity'] = 'res'
+
+    # Label encoding
+    encodings = ['h264', 'h265', 'x264', 'x265']
+    df.loc[df['word'].isin(encodings), 'entity'] = 'enc'
+
+    # Label season number
+    df.loc[df['word'].str.match(r'^s\d+$'), 'entity'] = 'sid'
+
+    # Label episode number
+    df.loc[df['word'].str.match(r'^e\d+$'), 'entity'] = 'eid'
+
+    # Save interim stacked output before processing further
+    df.to_csv('data/interim/stacked.csv', index=False)
+
+    #df.loc[df.word.str.contains('^s\d+e\d+$'), 'entity'] = 'season_episode'
+
+    """ # Downsample to fix class imbalance
     printProgress('Balancing classes', df)
     categories = [df[df.category == c] for c in df.category.unique()]
     sample_size = min([len(c) for c in categories])
@@ -121,23 +151,10 @@ def process_data():
                             random_state=123) for c in categories]
     df = pd.concat(downsampled)
 
-    # Encode labels
-    labelEncoder = LabelEncoder()
-    labelEncoder.fit(df['category'])
-    df['category'] = labelEncoder.transform(df['category'])
-
-    # Save label encoding
-    category_ids = df.category.unique()
-    category_names = labelEncoder.inverse_transform(category_ids)
-    category_dict = {}
-    for i in range(len(category_ids)):
-        category_dict[int(category_ids[i])] = category_names[i]
-    dictToJson(category_dict, 'data/processed/label_dictionary.json')
-
     # Save final output before splitting
-    df.to_csv('data/interim/final.csv', index=False)
+    df.to_csv('data/interim/balanced.csv', index=False) """
 
-    # Perform train test data split
+    """ # Perform train test data split
     printProgress('Splitting data', df)
     train, test = model_selection.train_test_split(df, test_size=0.2, random_state=123)
     x_train = train.drop('category', axis=1)
@@ -150,8 +167,9 @@ def process_data():
     x_train.to_csv('data/processed/x_train.csv', index=False, header=False)
     y_train.to_csv('data/processed/y_train.csv', index=False, header=False)
     x_test.to_csv('data/processed/x_test.csv', index=False, header=False)
-    y_test.to_csv('data/processed/y_test.csv', index=False, header=False)
+    y_test.to_csv('data/processed/y_test.csv', index=False, header=False) """
 
+# TODO: Call this method from process_data using pandas apply()
 def process_filename(filename):
     '''Processes a filename in preparation for classification by a model.
     '''
@@ -183,8 +201,12 @@ def process_filename(filename):
     # Remove rubbish characters
     filename = filename.strip('`~!@#$%^&*()-_+=[]|;:<>,./?')
 
+    # Split season and episode numbers
+    filename = split_season_episode(filename)
+
     return filename
 
+# TODO: Rename with underscores
 def dictToJson(dict, path):
     '''Serializes a dictionary as json and writes it to the specified file path.
 
@@ -206,3 +228,18 @@ def delete_files_from_dir(path):
 
 def printProgress(message, df):
     print('{message} ({rows} rows)'.format(message=message, rows=df.shape[0]))
+
+def split_season_episode(name):
+    patterns = [
+        [r'(?P<sid>s\d+)(?P<eid>e\d+)', '{sid} {eid}'], #s01e01
+        [r'(?P<sid>\d+)x(?P<eid>\d+)', 's{sid} e{eid}'] #01x01
+    ]
+    for pattern in patterns:
+        match = re.search(pattern[0], name)
+        if match != None:
+            name = name.replace(
+                match.group(0),
+                pattern[1].format(
+                    sid=match.group('sid'),
+                    eid=match.group('eid')))
+    return name
