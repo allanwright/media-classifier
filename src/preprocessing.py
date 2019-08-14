@@ -33,10 +33,9 @@ def get_consolidated_raw_data(path):
         DataFrame: The contents of all raw data files.
     '''
     consolidated = pd.DataFrame()
-    paths = ['movie', 'tv']
     for x in os.listdir(path):
         x_path = '%s/%s' % (path, x)
-        if os.path.isdir(x_path) and x in paths:
+        if os.path.isdir(x_path):
             print('Consolidating {path}'.format(path=x_path))
             for y in pb.progressbar(os.listdir(x_path)):
                 y_path = '%s/%s/%s' % (path, x, y)
@@ -53,29 +52,23 @@ def process_data():
 
     printProgress('Processing data', df)
 
-    # Remove commas from the name column
-    df['name'] = df['name'].str.replace(',', '')
-
-    # Lowercase all names
-    df['name'] = df['name'].str.lower()
-
     # Remove file sizes from the end of filenames
     df['name'] = df['name'].str.replace(r'\s{1}\(.+\)$', '')
     df['name'] = df['name'].str.replace(r' - \S+\s{1}\S+$', '')
-
-    #Merge categories
-    df.loc[df['category'] == 'game', 'category'] = 'app'
 
     # Create file extension column
     ext = df['name'].str.extract(r'\.(\w{3})$')
     ext.columns = ['ext']
     df['ext'] = ext['ext']
-
-    # Remove file extension from filenames
-    df['name'] = df['name'].str.replace(r'\.(\w{3})$', '')
     
     # Remove paths from filenames
     df['name'] = df['name'].str.split('/').str[-1]
+
+    # Process filenames
+    df['name'] = df['name'].apply(process_filename)
+
+    #Merge categories
+    df.loc[df['category'] == 'game', 'category'] = 'app'
     
     # Remove junk filenames
     movie_ext = [ 'mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v' ]
@@ -86,26 +79,6 @@ def process_data():
     
     # Remove duplicates by filename and category
     df.drop_duplicates(subset=['name', 'category'], inplace=True)
-
-    # Normalize word separators
-    df['name'] = df['name'].str.replace('.', ' ')
-    df['name'] = df['name'].str.replace('_', ' ')
-    df['name'] = df['name'].str.replace('-', ' ')
-    df['name'] = df['name'].str.replace('[', ' ')
-    df['name'] = df['name'].str.replace(']', ' ')
-    df['name'] = df['name'].str.replace('+', ' ')
-    df['name'] = df['name'].str.split().str.join(' ')
-
-    # Remove rubbish characters
-    for c in '`~!@#$%^&*()-_+=[]|;:<>,./?\'':
-        df['name'] = df['name'].str.replace(c, '')
-
-    # Append extension to name column then drop extension column
-    df['name'] = df['name'].map(str) + ' ' + df['ext']
-    df = df.drop('ext', axis=1)
-
-    # Split combined season and episode numbers
-    df['name'] = df['name'].apply(split_season_episode)
 
     # Save interim output before processing further
     df.to_csv('data/interim/combined.csv', index=False)
@@ -139,8 +112,6 @@ def process_data():
     # Save interim stacked output before processing further
     df.to_csv('data/interim/stacked.csv', index=False)
 
-    #df.loc[df.word.str.contains('^s\d+e\d+$'), 'entity'] = 'season_episode'
-
     """ # Downsample to fix class imbalance
     printProgress('Balancing classes', df)
     categories = [df[df.category == c] for c in df.category.unique()]
@@ -169,7 +140,6 @@ def process_data():
     x_test.to_csv('data/processed/x_test.csv', index=False, header=False)
     y_test.to_csv('data/processed/y_test.csv', index=False, header=False) """
 
-# TODO: Call this method from process_data using pandas apply()
 def process_filename(filename):
     '''Processes a filename in preparation for classification by a model.
     '''
@@ -178,13 +148,6 @@ def process_filename(filename):
 
     # Lowercase filename
     filename = filename.lower()
-
-    # Remove file sizes
-    filename = filename.replace(r'\s{1}\(.+\)$', '')
-    filename = filename.replace(r' - \S+\s{1}\S+$', '')
-
-    # Remove file extension
-    filename = filename.replace(r'\.(\w{3})$', '')
     
     # Remove paths
     filename = filename.split('/')[-1]
@@ -196,13 +159,16 @@ def process_filename(filename):
     filename = filename.replace('[', ' ')
     filename = filename.replace(']', ' ')
     filename = filename.replace('+', ' ')
-    filename = ' '.join(filename.split())
 
-    # Remove rubbish characters
-    filename = filename.strip('`~!@#$%^&*()-_+=[]|;:<>,./?')
+    # Remove any remaining punctuation and non word characters
+    for c in '\'\"`~!@#$%^&*()-_+=[]|;:<>,./?{}':
+        filename = filename.replace(c, '')
 
     # Split season and episode numbers
     filename = split_season_episode(filename)
+
+    # Remove duplicate spaces
+    filename = ' '.join(filename.split())
 
     return filename
 
