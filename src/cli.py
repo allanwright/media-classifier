@@ -35,8 +35,6 @@ def main():
             datasets.get_yak_data(os.getenv('YAK_URL'))
         else:
             print('Invalid source')
-    elif arguments['clean']:
-        preprocessing.clean_workspace()
     elif arguments['process']:
         preprocessing.process_data()
     elif arguments['train']:

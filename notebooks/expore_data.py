@@ -3,7 +3,7 @@ import pandas as pd
 import seaborn as sns
 from sklearn.utils import resample
 
-df = pd.read_csv('data/interim/final.csv')
+df = pd.read_csv('data/interim/balanced.csv')
 
 #%% Display top x rows
 print(df.head(20))
@@ -15,5 +15,8 @@ sns.countplot(x='category', data=df)
 df['word_count'] = df['name'].str.split().apply(len)
 sns.distplot(df['word_count'], kde=False,
     bins=range(1, 26))
+
+#%%
+print(df[df['word_count'] >= 15])
 
 #%%

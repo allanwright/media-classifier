@@ -6,20 +6,6 @@ import re
 from sklearn import model_selection
 from sklearn.utils import resample
 
-def clean_workspace():
-    '''Removes all processed data and models from the workspace.
-
-    '''
-    paths = [
-        'data/interim',
-        'data/processed',
-        'models/baseline',
-        'models/cnn'
-    ]
-
-    for path in paths:
-        delete_files_from_dir(path)
-
 def get_consolidated_raw_data(path):
     '''Gets a pandas dataframe containing the contents of all raw data files.
 
