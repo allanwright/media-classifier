@@ -71,11 +71,16 @@ def process_data():
     df.loc[df['category'] == 'game', 'category'] = 'app'
     
     # Remove junk filenames
+    music_ext = [ 'mp3', 'm4a', 'ogg', 'flac', 'wav' ]
     movie_ext = [ 'mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v' ]
     tv_ext = [ 'mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v' ]
+    app_ext = [ 'exe', 'bin', 'zip', 'rar', 'iso',
+                'cab', 'dll', 'msi', 'dmg', 'dat' ]
 
-    df = df[((df['category'] == 'movie') & (df['ext'].isin(movie_ext))) |
-            ((df['category'] == 'tv') & (df['ext'].isin(tv_ext)))]
+    df = df[((df['category'] == 'music') & (df['ext'].isin(music_ext))) |
+            ((df['category'] == 'movie') & (df['ext'].isin(movie_ext))) |
+            ((df['category'] == 'tv') & (df['ext'].isin(tv_ext))) |
+            ((df['category'] == 'app') & (df['ext'].isin(app_ext)))]
     
     # Remove duplicates by filename and category
     df.drop_duplicates(subset=['name', 'category'], inplace=True)
@@ -83,7 +88,7 @@ def process_data():
     # Save interim output before processing further
     df.to_csv('data/interim/combined.csv', index=False)
 
-    # Split the filename into individual words then stack the DataFrame
+    """ # Split the filename into individual words then stack the DataFrame
     df = pd.DataFrame(df['name'].str.split().tolist(), index=[df.index, df.category]).stack()
     df = df.reset_index()
     df.columns = ['index', 'category', 'pos', 'word']
@@ -110,9 +115,9 @@ def process_data():
     df.loc[df['word'].str.match(r'^e\d+$'), 'entity'] = 'eid'
 
     # Save interim stacked output before processing further
-    df.to_csv('data/interim/stacked.csv', index=False)
+    df.to_csv('data/interim/stacked.csv', index=False) """
 
-    """ # Downsample to fix class imbalance
+    # Downsample to fix class imbalance
     printProgress('Balancing classes', df)
     categories = [df[df.category == c] for c in df.category.unique()]
     sample_size = min([len(c) for c in categories])
@@ -123,9 +128,9 @@ def process_data():
     df = pd.concat(downsampled)
 
     # Save final output before splitting
-    df.to_csv('data/interim/balanced.csv', index=False) """
+    df.to_csv('data/interim/balanced.csv', index=False)
 
-    """ # Perform train test data split
+    # Perform train test data split
     printProgress('Splitting data', df)
     train, test = model_selection.train_test_split(df, test_size=0.2, random_state=123)
     x_train = train.drop('category', axis=1)
@@ -138,7 +143,7 @@ def process_data():
     x_train.to_csv('data/processed/x_train.csv', index=False, header=False)
     y_train.to_csv('data/processed/y_train.csv', index=False, header=False)
     x_test.to_csv('data/processed/x_test.csv', index=False, header=False)
-    y_test.to_csv('data/processed/y_test.csv', index=False, header=False) """
+    y_test.to_csv('data/processed/y_test.csv', index=False, header=False)
 
 def process_filename(filename):
     '''Processes a filename in preparation for classification by a model.
