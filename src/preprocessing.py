@@ -1,4 +1,3 @@
-import json
 import os
 import pandas as pd
 import progressbar as pb
@@ -6,6 +5,7 @@ import re
 from sklearn import model_selection
 from sklearn.utils import resample
 from sklearn.preprocessing import LabelEncoder
+from src import persistence
 
 def get_consolidated_raw_data(path):
     '''Gets a pandas dataframe containing the contents of all raw data files.
@@ -128,7 +128,8 @@ def process_data():
     category_dict = {}
     for i in range(len(category_ids)):
         category_dict[int(category_ids[i])] = category_names[i]
-    dictToJson(category_dict, 'data/processed/label_dictionary.json')
+    persistence.dict_to_json(
+        category_dict, 'data/processed/label_dictionary.json')
 
     # Save final output before splitting
     df.to_csv('data/interim/final.csv', index=False)
@@ -179,17 +180,6 @@ def process_filename(filename):
     filename = ' '.join(filename.split())
 
     return filename
-
-def dictToJson(dict, path):
-    '''Serializes a dictionary as json and writes it to the specified file path.
-
-    Args:
-        dict (dict): The dictionary to serialize.
-        path (string): The file path to write to.
-    '''
-    dict_json = json.dumps(dict)
-    with open(path, 'w') as json_file:
-        json_file.write(dict_json)
 
 def printProgress(message, df):
     print('{message} ({rows} rows)'.format(message=message, rows=df.shape[0]))
