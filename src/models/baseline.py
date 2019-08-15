@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
-from joblib import dump, load
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from src import datasets
+from src import persistence
 from src import prediction
 from src import preprocessing
 
@@ -33,10 +33,8 @@ def train():
 
     print('Baseline model accuracy: {accuracy}'.format(accuracy=score))
 
-    dump(vectorizer, 'models/baseline/vectorizer.joblib')
-    dump(classifier, 'models/baseline/model.joblib')
-
-    print('Saved model to models/baseline/model.joblib')
+    persistence.save_model(vectorizer, 'models/cls_base_vec.joblib')
+    persistence.save_model(classifier, 'models/cls_base_mdl.joblib')
 
 def predict(filename):
     ''' Makes a prediction using the baseline model.
@@ -44,10 +42,10 @@ def predict(filename):
     Args:
         filenanme (string): The filename to evaluate.
     '''
-    vectorizer = load('models/baseline/vectorizer.joblib')
+    vectorizer = persistence.load_model('models/cls_base_vec.joblib')
     x = preprocessing.process_filename(filename)
     x = vectorizer.transform(np.array([x]))
-    classifier = load('models/baseline/model.joblib')
+    classifier = persistence.load_model('models/cls_base_mdl.joblib')
     y = classifier.predict_proba(x)
     np.set_printoptions(suppress=True)
     label, confidence = prediction.get_label(y)

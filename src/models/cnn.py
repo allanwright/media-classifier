@@ -2,7 +2,6 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from joblib import dump, load
 from tensorflow.python.keras import models
 from tensorflow.python.keras import initializers
 from tensorflow.python.keras import regularizers
@@ -15,6 +14,7 @@ from tensorflow.python.keras.layers import GlobalAveragePooling1D
 from tensorflow.python.keras.preprocessing import sequence
 from tensorflow.python.keras.preprocessing import text
 from src import datasets
+from src import persistence
 from src import prediction
 from src import preprocessing
 
@@ -46,7 +46,7 @@ def train():
     x_train, y_train, x_test, y_test = datasets.get_train_test_data()
     tokenizer = text.Tokenizer(num_words=top_k)
     tokenizer.fit_on_texts(x_train)
-    dump(tokenizer, 'models/cnn/tokenizer.joblib')
+    persistence.save_model(tokenizer, 'models/cls_cnn_tok.joblib')
     preprocessing.dictToJson(
         tokenizer.word_index,
         'data/processed/token_dictionary.json')
@@ -100,7 +100,7 @@ def train():
             acc=history['val_acc'][-1], loss=history['val_loss'][-1]))
 
     # Save model.
-    model.save('models/cnn/model.h5')
+    model.save('models/cls_cnn_mdl.h5')
     #return history['val_acc'][-1], history['val_loss'][-1]
 
 def predict(filename):
@@ -109,11 +109,11 @@ def predict(filename):
     Args:
         input (filename): The filename to evaluate.
     '''
-    tokenizer = load('models/cnn/tokenizer.joblib')
+    tokenizer = persistence.load_model('models/cls_cnn_tok.joblib')
     x = preprocessing.process_filename(filename)
     x = tokenizer.texts_to_sequences([x])
     x = sequence.pad_sequences(x, 25)
-    model = tf.keras.models.load_model('models/cnn/model.h5')
+    model = tf.keras.models.load_model('models/cls_cnn_mdl.h5')
     y = model.predict_proba(x)
     label, confidence = prediction.get_label(y)
     print('Predicted class \'{label}\' with {confidence:.2f}% confidence.'
