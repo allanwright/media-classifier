@@ -180,7 +180,6 @@ def process_filename(filename):
 
     return filename
 
-# TODO: Rename with underscores
 def dictToJson(dict, path):
     '''Serializes a dictionary as json and writes it to the specified file path.
 
@@ -191,14 +190,6 @@ def dictToJson(dict, path):
     dict_json = json.dumps(dict)
     with open(path, 'w') as json_file:
         json_file.write(dict_json)
-
-def delete_files_from_dir(path):
-    exclusions = ['.gitignore', '.gitkeep']
-    print('Cleaning {path}'.format(path=path))
-    for i in pb.progressbar(os.listdir(path)):
-        file_path = path + '/' + i
-        if os.path.isfile(file_path) and i not in exclusions:
-            os.remove(file_path)
 
 def printProgress(message, df):
     print('{message} ({rows} rows)'.format(message=message, rows=df.shape[0]))
