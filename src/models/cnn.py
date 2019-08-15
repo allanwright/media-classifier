@@ -79,10 +79,10 @@ def train():
 
     # Create callback for early stopping on validation loss. If the loss does
     # not decrease in two consecutive tries, stop training.
-    logdir="logs/scalars/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+    #logdir="logs/scalars/" + datetime.now().strftime("%Y%m%d-%H%M%S")
     callbacks = [tf.keras.callbacks.EarlyStopping(
-        monitor='val_loss', patience=2),
-        tf.keras.callbacks.TensorBoard(log_dir=logdir)]
+        monitor='val_loss', patience=2)]#,
+        #tf.keras.callbacks.TensorBoard(log_dir=logdir)]
 
     # Train and validate model.
     history = model.fit(
