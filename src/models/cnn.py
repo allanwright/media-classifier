@@ -15,7 +15,7 @@ from tensorflow.python.keras.layers import GlobalAveragePooling1D
 from tensorflow.python.keras.preprocessing import sequence
 from tensorflow.python.keras.preprocessing import text
 from src import datasets
-from src import infer
+from src import prediction
 from src import preprocessing
 
 def train():
@@ -103,8 +103,8 @@ def train():
     model.save('models/cnn/model.h5')
     #return history['val_acc'][-1], history['val_loss'][-1]
 
-def eval(filename):
-    ''' Evaluates the tensorflow cnn model.
+def predict(filename):
+    ''' Makes a prediction using the separable cnn model.
 
     Args:
         input (filename): The filename to evaluate.
@@ -115,7 +115,7 @@ def eval(filename):
     x = sequence.pad_sequences(x, 25)
     model = tf.keras.models.load_model('models/cnn/model.h5')
     y = model.predict_proba(x)
-    label, confidence = infer.get_label(y)
+    label, confidence = prediction.get_label(y)
     print('Predicted class \'{label}\' with {confidence:.2f}% confidence.'
         .format(label=label, confidence=confidence*100))
 

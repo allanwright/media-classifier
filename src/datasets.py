@@ -180,4 +180,4 @@ def get_train_test_data():
 
 def get_processed_data(name):
     df = pd.read_csv('data/processed/' + name, header=None)
-    return np.ravel(df.to_numpy())
+    return np.ravel(df[0].to_numpy())

@@ -5,6 +5,7 @@ import progressbar as pb
 import re
 from sklearn import model_selection
 from sklearn.utils import resample
+from sklearn.preprocessing import LabelEncoder
 
 def get_consolidated_raw_data(path):
     '''Gets a pandas dataframe containing the contents of all raw data files.
@@ -115,6 +116,22 @@ def process_data():
 
     # Save final output before splitting
     df.to_csv('data/interim/balanced.csv', index=False)
+
+    # Encode labels
+    labelEncoder = LabelEncoder()
+    labelEncoder.fit(df['category'])
+    df['category'] = labelEncoder.transform(df['category'])
+
+    # Save label encoding
+    category_ids = df.category.unique()
+    category_names = labelEncoder.inverse_transform(category_ids)
+    category_dict = {}
+    for i in range(len(category_ids)):
+        category_dict[int(category_ids[i])] = category_names[i]
+    dictToJson(category_dict, 'data/processed/label_dictionary.json')
+
+    # Save final output before splitting
+    df.to_csv('data/interim/final.csv', index=False)
 
     # Perform train test data split
     printProgress('Splitting data', df)

@@ -9,10 +9,10 @@ Media-Classifier has a CLI for executing all required steps in training the text
 
 ```shell
 Usage:
-    mc aquire <source>          Downloads raw data from the specified source.
-    mc process                  Processes the raw data.
-    mc train <model>            Trains the model.
-    mc eval <model> <filename>  Evaluates the model.
+    mc aquire <source>              Downloads raw data from the specified source.
+    mc process                      Processes the raw data.
+    mc train <model>                Trains the model.
+    mc predict <model> <filename>   Makes predictions using a model.
 
 Arguments:
     <source>    Source to aquire data from (pig, kraken, xerus, yak).

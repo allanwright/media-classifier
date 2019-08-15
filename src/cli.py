@@ -5,11 +5,11 @@ Usage:
     mc clean
     mc process
     mc train <model>
-    mc eval <model> <filename>
+    mc predict <model> <filename>
 
 Arguments:
     <source>    Source to aquire data from (pig, kraken, xerus, yak)
-    <model>     Model to train/evaluate (baseline, cnn)
+    <model>     Model to train/predict (baseline, cnn)
     <filename>  The filename to evaluate
 '''
 import os
@@ -43,13 +43,13 @@ def main():
             baseline.train()
         elif model == 'cnn':
             cnn.train()
-    elif arguments['eval']:
+    elif arguments['predict']:
         model = arguments['<model>']
         filename = arguments['<filename>']
         if model == 'baseline':
-            baseline.eval(filename)
+            baseline.predict(filename)
         elif model == 'cnn':
-            cnn.eval(filename)
+            cnn.predict(filename)
 
 if __name__ == '__main__':
     main()

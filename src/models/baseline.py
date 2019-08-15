@@ -4,7 +4,7 @@ from joblib import dump, load
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from src import datasets
-from src import infer
+from src import prediction
 from src import preprocessing
 
 def train():
@@ -38,8 +38,8 @@ def train():
 
     print('Saved model to models/baseline/model.joblib')
 
-def eval(filename):
-    ''' Evaluates the baseline model.
+def predict(filename):
+    ''' Makes a prediction using the baseline model.
 
     Args:
         filenanme (string): The filename to evaluate.
@@ -50,6 +50,6 @@ def eval(filename):
     classifier = load('models/baseline/model.joblib')
     y = classifier.predict_proba(x)
     np.set_printoptions(suppress=True)
-    label, confidence = infer.get_label(y)
+    label, confidence = prediction.get_label(y)
     print('Predicted class \'{label}\' with {confidence:.2f}% confidence.'
         .format(label=label, confidence=confidence*100))
