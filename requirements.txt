@@ -10,3 +10,4 @@ seaborn
 progressbar2
 rope
 numpy<1.17.0
+spacy

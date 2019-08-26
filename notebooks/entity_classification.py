@@ -18,3 +18,9 @@ print(split_season_episode('Game.of.Thrones.s01e01.mp4'))
 print(split_season_episode('TEST'))
 
 #%%
+import pandas as pd
+from src import preprocessing
+df = preprocessing.get_consolidated_raw_data('data/raw')
+print(df.head())
+
+#%%
