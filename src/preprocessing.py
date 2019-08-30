@@ -6,6 +6,7 @@ from sklearn import model_selection
 from sklearn.utils import resample
 from sklearn.preprocessing import LabelEncoder
 from src import persistence
+from mccore import preprocessing
 
 def get_consolidated_raw_data(path):
     '''Gets a pandas dataframe containing the contents of all raw data files.
@@ -55,7 +56,7 @@ def process_data():
     df['name'] = df['name'].str.split('/').str[-1]
 
     # Process filenames
-    df['name'] = df['name'].apply(process_filename)
+    df['name'] = df['name'].apply(preprocessing.prepare_input)
 
     #Merge categories
     df.loc[df['category'] == 'game', 'category'] = 'app'
@@ -211,38 +212,6 @@ def process_data_for_ner():
     # Save interim stacked output before processing further
     df.to_csv('data/interim/stacked.csv', index=False)
 
-def process_filename(filename):
-    '''Processes a filename in preparation for classification by a model.
-    '''
-    # Remove commas
-    filename = filename.replace(',', '')
-
-    # Lowercase filename
-    filename = filename.lower()
-    
-    # Remove paths
-    filename = filename.split('/')[-1]
-
-    # Normalize word separators
-    filename = filename.replace('.', ' ')
-    filename = filename.replace('_', ' ')
-    filename = filename.replace('-', ' ')
-    filename = filename.replace('[', ' ')
-    filename = filename.replace(']', ' ')
-    filename = filename.replace('+', ' ')
-
-    # Remove any remaining punctuation and non word characters
-    for c in '\'\"`~!@#$%^&*()-_+=[]|;:<>,./?{}':
-        filename = filename.replace(c, '')
-
-    # Split season and episode numbers
-    filename = split_season_episode(filename)
-
-    # Remove duplicate spaces
-    filename = ' '.join(filename.split())
-
-    return filename
-
 def get_app_ext():
     return [ 'exe', 'bin', 'zip', 'rar', 'iso',
              'cab', 'dll', 'msi', 'dmg', 'dat' ]
@@ -258,18 +227,3 @@ def get_tv_ext():
 
 def print_progress(message, df):
     print('{message} ({rows} rows)'.format(message=message, rows=df.shape[0]))
-
-def split_season_episode(name):
-    patterns = [
-        [r'(?P<sid>s\d+)(?P<eid>e\d+)', '{sid} {eid}'], #s01e01
-        [r'(?P<sid>\d+)x(?P<eid>\d+)', 's{sid} e{eid}'] #01x01
-    ]
-    for pattern in patterns:
-        match = re.search(pattern[0], name)
-        if match != None:
-            name = name.replace(
-                match.group(0),
-                pattern[1].format(
-                    sid=match.group('sid'),
-                    eid=match.group('eid')))
-    return name

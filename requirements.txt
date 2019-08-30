@@ -11,3 +11,4 @@ progressbar2
 rope
 numpy<1.17.0
 spacy
+git+https://github.com/allanwright/media-classifier-core
