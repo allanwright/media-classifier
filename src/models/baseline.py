@@ -3,9 +3,9 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from src import datasets
-from src import persistence
 from src import prediction
-from src import preprocessing
+from mccore import persistence
+from mccore import preprocessing
 
 def train():
     '''Trains the baseline model.
@@ -33,8 +33,8 @@ def train():
 
     print('Baseline model accuracy: {accuracy}'.format(accuracy=score))
 
-    persistence.save_model(vectorizer, 'models/cls_base_vec.joblib')
-    persistence.save_model(classifier, 'models/cls_base_mdl.joblib')
+    persistence.obj_to_bin(vectorizer, 'models/cls_base_vec.pickle')
+    persistence.obj_to_bin(classifier, 'models/cls_base_mdl.pickle')
 
 def predict(filename):
     ''' Makes a prediction using the baseline model.
@@ -42,10 +42,10 @@ def predict(filename):
     Args:
         filenanme (string): The filename to evaluate.
     '''
-    vectorizer = persistence.load_model('models/cls_base_vec.joblib')
-    x = preprocessing.process_filename(filename)
+    vectorizer = persistence.bin_to_obj('models/cls_base_vec.pickle')
+    x = preprocessing.prepare_input(filename)
     x = vectorizer.transform(np.array([x]))
-    classifier = persistence.load_model('models/cls_base_mdl.joblib')
+    classifier = persistence.bin_to_obj('models/cls_base_mdl.pickle')
     y = classifier.predict_proba(x)
     np.set_printoptions(suppress=True)
     label, confidence = prediction.get_label(y)

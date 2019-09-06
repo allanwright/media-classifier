@@ -5,7 +5,7 @@ import re
 from sklearn import model_selection
 from sklearn.utils import resample
 from sklearn.preprocessing import LabelEncoder
-from src import persistence
+from mccore import persistence
 from mccore import preprocessing
 
 def get_consolidated_raw_data(path):
@@ -102,7 +102,7 @@ def process_data():
     category_dict = {}
     for i in range(len(category_ids)):
         category_dict[int(category_ids[i])] = category_names[i]
-    persistence.dict_to_json(
+    persistence.obj_to_json(
         category_dict, 'data/processed/label_dictionary.json')
     
     # Create named entity columns

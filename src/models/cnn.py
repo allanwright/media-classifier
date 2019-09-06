@@ -13,10 +13,10 @@ from tensorflow.python.keras.layers import MaxPooling1D
 from tensorflow.python.keras.layers import GlobalAveragePooling1D
 from tensorflow.python.keras.preprocessing import sequence
 from tensorflow.python.keras.preprocessing import text
+from mccore import persistence
+from mccore import preprocessing
 from src import datasets
-from src import persistence
 from src import prediction
-from src import preprocessing
 
 def train():
     '''Trains a separable cnn model.
@@ -46,8 +46,8 @@ def train():
     x_train, y_train, x_test, y_test = datasets.get_train_test_data()
     tokenizer = text.Tokenizer(num_words=top_k)
     tokenizer.fit_on_texts(x_train)
-    persistence.save_model(tokenizer, 'models/cls_cnn_tok.joblib')
-    preprocessing.dictToJson(
+    persistence.obj_to_bin(tokenizer, 'models/cls_cnn_tok.pickle')
+    persistence.obj_to_json(
         tokenizer.word_index,
         'data/processed/token_dictionary.json')
 
@@ -109,8 +109,8 @@ def predict(filename):
     Args:
         input (filename): The filename to evaluate.
     '''
-    tokenizer = persistence.load_model('models/cls_cnn_tok.joblib')
-    x = preprocessing.process_filename(filename)
+    tokenizer = persistence.bin_to_obj('models/cls_cnn_tok.pickle')
+    x = preprocessing.prepare_input(filename)
     x = tokenizer.texts_to_sequences([x])
     x = sequence.pad_sequences(x, 25)
     model = tf.keras.models.load_model('models/cls_cnn_mdl.h5')
