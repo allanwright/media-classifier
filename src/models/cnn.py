@@ -14,9 +14,9 @@ from tensorflow.python.keras.layers import GlobalAveragePooling1D
 from tensorflow.python.keras.preprocessing import sequence
 from tensorflow.python.keras.preprocessing import text
 from mccore import persistence
+from mccore import prediction
 from mccore import preprocessing
 from src import datasets
-from src import prediction
 
 def train():
     '''Trains a separable cnn model.
@@ -115,7 +115,8 @@ def predict(filename):
     x = sequence.pad_sequences(x, 25)
     model = tf.keras.models.load_model('models/cls_cnn_mdl.h5')
     y = model.predict_proba(x)
-    label, confidence = prediction.get_label(y)
+    labels = persistence.json_to_obj('data/processed/label_dictionary.json')
+    label, confidence = prediction.get_label(y, labels)
     print('Predicted class \'{label}\' with {confidence:.2f}% confidence.'
         .format(label=label, confidence=confidence*100))
 

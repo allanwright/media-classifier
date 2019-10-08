@@ -3,8 +3,9 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from src import datasets
-from src import prediction
+from mccore import Classifier
 from mccore import persistence
+from mccore import prediction
 from mccore import preprocessing
 
 def train():
@@ -42,12 +43,19 @@ def predict(filename):
     Args:
         filenanme (string): The filename to evaluate.
     '''
-    vectorizer = persistence.bin_to_obj('models/cls_base_vec.pickle')
-    x = preprocessing.prepare_input(filename)
-    x = vectorizer.transform(np.array([x]))
-    classifier = persistence.bin_to_obj('models/cls_base_mdl.pickle')
-    y = classifier.predict_proba(x)
-    np.set_printoptions(suppress=True)
-    label, confidence = prediction.get_label(y)
+    classifier = Classifier(
+        persistence.bin_to_obj('models/cls_base_vec.pickle'),
+        persistence.bin_to_obj('models/cls_base_mdl.pickle'),
+        persistence.json_to_obj('data/processed/label_dictionary.json')
+    )
+    label, confidence = classifier.predict(filename)
+
+    #vectorizer = persistence.bin_to_obj('models/cls_base_vec.pickle')
+    #x = preprocessing.prepare_input(filename)
+    #x = vectorizer.transform(np.array([x]))
+    #classifier = persistence.bin_to_obj('models/cls_base_mdl.pickle')
+    #y = classifier.predict_proba(x)
+    #np.set_printoptions(suppress=True)
+    #label, confidence = prediction.get_label(y)
     print('Predicted class \'{label}\' with {confidence:.2f}% confidence.'
         .format(label=label, confidence=confidence*100))
