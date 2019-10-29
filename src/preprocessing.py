@@ -135,15 +135,13 @@ def process_data():
     y_test.to_csv('data/processed/y_test.csv', index=False, header=False)
 
     # Process data for named entity recognition
-    #process_data_for_ner()
+    process_data_for_ner()
 
 def apply_entity_names(row, nlp):
     doc = nlp(row['name'])
     for ent in doc.ents:
         print(ent)
 
-# TODO: Remove filenames containing 2MovieRulz
-# TODO: Remove filenames containing desi
 def process_data_for_ner():
     df = pd.read_csv('data/interim/combined.csv')
     print_progress('Processing data for named entity recognition', df)
@@ -161,7 +159,7 @@ def process_data_for_ner():
     # Downsample to fix class imbalance
     print_progress('Balancing classes', df)
     categories = [df[df.category == c] for c in df.category.unique()]
-    sample_size = 100 #min([len(c) for c in categories])
+    sample_size = min([len(c) for c in categories])
     downsampled = [resample(c,
                             replace=False,
                             n_samples=sample_size,
