@@ -41,7 +41,7 @@ def tsv_to_json_format(input_path,output_path,unknown_label):
                         label_dict[entity]=[]
                         label_dict[entity].append(d) 
             start+=len(word)+1
-            if entity == 'ext':
+            if entity == 'extension':
                 data_dict['content']=s
                 s=''
                 label_list=[]
@@ -200,7 +200,7 @@ if output_dir is not None:
         print("Tokens", [(t.text, t.ent_type_, t.ent_iob) for t in doc]) """
 
 #%%
-def predict():
+""" def predict():
     x_train, _, _, _ = datasets.get_train_test_data()
     df = pd.DataFrame()
     df['name'] = x_train
@@ -210,5 +210,6 @@ def predict():
         s = x_train[i]
         doc = nlp(s)
         df.loc[i, 'entity']
+    print(df)
 
-predict()
+predict() """

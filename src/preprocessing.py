@@ -1,5 +1,7 @@
+import json
 import os
 import pandas as pd
+import pickle
 import progressbar as pb
 import re
 from sklearn import model_selection
@@ -35,7 +37,6 @@ def get_consolidated_raw_data(path):
                     consolidated = consolidated.append(df, ignore_index=True)
     return consolidated
 
-# TODO: Reassign any filenames with season and episode number to tv category
 def process_data():
     '''Processes the raw data files.
     '''
@@ -134,8 +135,11 @@ def process_data():
     x_test.to_csv('data/processed/x_test.csv', index=False, header=False)
     y_test.to_csv('data/processed/y_test.csv', index=False, header=False)
 
-    # Process data for named entity recognition
+    # Process data for named entity recognition labelling
     process_data_for_ner()
+
+    # Process labelled named entity recognition data (if any)
+    process_labelled_ner_data()
 
 def apply_entity_names(row, nlp):
     doc = nlp(row['name'])
@@ -210,6 +214,30 @@ def process_data_for_ner():
     # Save interim stacked output before processing further
     df.to_csv('data/interim/stacked.csv', index=False)
 
+def process_labelled_ner_data():
+    df = pd.read_csv('data/interim/ner_labelled.csv')
+
+    # Keep only word and corresponding label
+    df = df[['word', 'entity']]
+
+    # Save to tsv
+    df.to_csv(
+        'data/interim/ner_labelled.tsv',
+        sep='\t',
+        header=False,
+        index=False)
+    
+    # Convert from tsv to json
+    tsv_to_json_format(
+        "data/interim/ner_labelled.tsv",
+        'data/interim/ner_labelled.json',
+        'na')
+    
+    # Write out spacy file
+    write_spacy_file(
+        'data/interim/ner_labelled.json',
+        'data/processed/ner_labelled.pickle')
+
 def get_app_ext():
     return [ 'exe', 'bin', 'zip', 'rar', 'iso',
              'cab', 'dll', 'msi', 'dmg', 'dat' ]
@@ -225,3 +253,91 @@ def get_tv_ext():
 
 def print_progress(message, df):
     print('{message} ({rows} rows)'.format(message=message, rows=df.shape[0]))
+
+def tsv_to_json_format(input_path,output_path,unknown_label):
+    try:
+        f=open(input_path,'r') # input file
+        fp=open(output_path, 'w') # output file
+        data_dict={}
+        annotations =[]
+        label_dict={}
+        s=''
+        start=0
+        for line in f:
+            word,entity=line.split('\t')
+            s+=word+" "
+            entity=entity[:len(entity)-1]
+            if entity!=unknown_label:
+                if len(entity) != 1:
+                    d={}
+                    d['text']=word
+                    d['start']=start
+                    d['end']=start+len(word)-1  
+                    try:
+                        label_dict[entity].append(d)
+                    except:
+                        label_dict[entity]=[]
+                        label_dict[entity].append(d) 
+            start+=len(word)+1
+            if entity == 'extension':
+                data_dict['content']=s
+                s=''
+                label_list=[]
+                for ents in list(label_dict.keys()):
+                    for i in range(len(label_dict[ents])):
+                        if(label_dict[ents][i]['text']!=''):
+                            l=[ents,label_dict[ents][i]]
+                            for j in range(i+1,len(label_dict[ents])): 
+                                if(label_dict[ents][i]['text']==label_dict[ents][j]['text']):  
+                                    di={}
+                                    di['start']=label_dict[ents][j]['start']
+                                    di['end']=label_dict[ents][j]['end']
+                                    di['text']=label_dict[ents][i]['text']
+                                    l.append(di)
+                                    label_dict[ents][j]['text']=''
+                            label_list.append(l)                          
+                            
+                for entities in label_list:
+                    label={}
+                    label['label']=[entities[0]]
+                    label['points']=entities[1:]
+                    annotations.append(label)
+                data_dict['annotation']=annotations
+                annotations=[]
+                json.dump(data_dict, fp)
+                fp.write('\n')
+                data_dict={}
+                start=0
+                label_dict={}
+    except Exception as e:
+        print("Unable to process file" + "\n" + "error = " + str(e))
+        return None
+
+def write_spacy_file(input_file=None, output_file=None):
+    try:
+        training_data = []
+        lines=[]
+        with open(input_file, 'r') as f:
+            lines = f.readlines()
+
+        for line in lines:
+            data = json.loads(line)
+            text = data['content']
+            entities = []
+            for annotation in data['annotation']:
+                point = annotation['points'][0]
+                labels = annotation['label']
+                if not isinstance(labels, list):
+                    labels = [labels]
+
+                for label in labels:
+                    entities.append((point['start'], point['end'] + 1 ,label))
+            
+            training_data.append((text, {"entities" : entities}))
+
+        with open(output_file, 'wb') as fp:
+            pickle.dump(training_data, fp)
+
+    except Exception as e:
+        print("Unable to process " + input_file + "\n" + "error = " + str(e))
+        return None

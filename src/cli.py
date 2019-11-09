@@ -9,14 +9,14 @@ Usage:
 
 Arguments:
     <source>    Source to aquire data from (pig, kraken, xerus, yak)
-    <model>     Model to train/predict (baseline, cnn)
+    <model>     Model to train/predict (baseline, cnn, ner)
     <filename>  The filename to evaluate
 '''
 import os
 from docopt import docopt
 from dotenv import load_dotenv
 from src import datasets, preprocessing
-from src.models import baseline, cnn
+from src.models import baseline, cnn, ner
 
 def main():
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -43,6 +43,8 @@ def main():
             baseline.train()
         elif model == 'cnn':
             cnn.train()
+        elif model == 'ner':
+            ner.train()
     elif arguments['predict']:
         model = arguments['<model>']
         filename = arguments['<filename>']
@@ -50,6 +52,8 @@ def main():
             baseline.predict(filename)
         elif model == 'cnn':
             cnn.predict(filename)
+        elif model == 'ner':
+            ner.predict(filename)
 
 if __name__ == '__main__':
     main()
