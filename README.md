@@ -16,6 +16,6 @@ Usage:
 
 Arguments:
     <source>    Source to aquire data from (pig, kraken, xerus, yak).
-    <model>     Model to train/evaluate (baseline, cnn).
+    <model>     Model to train/evaluate (baseline, cnn, ner).
     <filename>  The filename to evaluate.
 ```
