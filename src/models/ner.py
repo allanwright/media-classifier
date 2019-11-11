@@ -39,7 +39,7 @@ def train():
                 nlp.update(texts, annotations, drop=0.5, losses=losses)
             print("Losses", losses)
     
-    nlp.to_disk('models/ner')
+    persistence.obj_to_bin(nlp.to_bytes(), 'models/ner_mdl.pickle')
 
 def predict(filename):
     ''' Makes a prediction using the named entity recognition model.
@@ -48,15 +48,11 @@ def predict(filename):
         input (filename): The filename to evaluate.
     '''
     filename = preprocessing.prepare_input(filename)
-    #x_train, _, _, _ = datasets.get_train_test_data()
-    #df = pd.DataFrame()
-    #df['name'] = x_train
-    #df['entity'] = ''
-    nlp = spacy.load(Path('models/ner'))
+    nlp = spacy.blank('en')
+    ner = nlp.create_pipe('ner')
+    nlp.add_pipe(ner, last=True)
+    nlp_bytes = persistence.bin_to_obj('models/ner_mdl.pickle')
+    nlp.from_bytes(nlp_bytes)
     doc = nlp(filename)
     print("Entities", [(ent.text, ent.label_) for ent in doc.ents])
     print("Tokens", [(t.text, t.ent_type_, t.ent_iob) for t in doc])
-    """ for i in range(x_train.shape[0]):
-        s = x_train[i]
-        doc = nlp(s)
-        df.loc[i, 'entity'] """
