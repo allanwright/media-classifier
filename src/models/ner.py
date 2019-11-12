@@ -1,9 +1,11 @@
 from __future__ import unicode_literals, print_function
-import plac
+#import plac
 import random
-from pathlib import Path
+#from pathlib import Path
 import spacy
 from spacy.util import minibatch, compounding
+from mccore import EntityRecognizer
+from mccore import ner
 from mccore import persistence
 from mccore import preprocessing
 
@@ -12,24 +14,19 @@ def train():
 
     '''
     iterations=10
-
-    # Load training data
     train_data = persistence.bin_to_obj('data/processed/ner_labelled.pickle')
-
-    nlp = spacy.blank('en')
-    ner = nlp.create_pipe('ner')
-    nlp.add_pipe(ner, last=True)
+    nlp, ner_pipe = ner.get_model()
 
     # Add labels
     for _, annotations in train_data:
         for ent in annotations.get("entities"):
-            ner.add_label(ent[2])
+            ner_pipe.add_label(ent[2])
 
     # get names of other pipes to disable them during training
     other_pipes = [pipe for pipe in nlp.pipe_names if pipe != "ner"]
     with nlp.disable_pipes(*other_pipes):  # only train NER
         nlp.begin_training()
-        for itn in range(iterations):
+        for i in range(iterations):
             random.shuffle(train_data)
             losses = {}
             # batch up the examples using spaCy's minibatch
