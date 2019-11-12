@@ -1,13 +1,10 @@
-from __future__ import unicode_literals, print_function
-#import plac
+#from __future__ import unicode_literals, print_function
 import random
-#from pathlib import Path
 import spacy
 from spacy.util import minibatch, compounding
 from mccore import EntityRecognizer
 from mccore import ner
 from mccore import persistence
-from mccore import preprocessing
 
 def train():
     '''Trains the named entity recognition model.
@@ -44,12 +41,8 @@ def predict(filename):
     Args:
         input (filename): The filename to evaluate.
     '''
-    filename = preprocessing.prepare_input(filename)
-    nlp = spacy.blank('en')
-    ner = nlp.create_pipe('ner')
-    nlp.add_pipe(ner, last=True)
+    nlp, _ = ner.get_model()
     nlp_bytes = persistence.bin_to_obj('models/ner_mdl.pickle')
     nlp.from_bytes(nlp_bytes)
-    doc = nlp(filename)
-    print("Entities", [(ent.text, ent.label_) for ent in doc.ents])
-    print("Tokens", [(t.text, t.ent_type_, t.ent_iob) for t in doc])
+    recognizer = EntityRecognizer(nlp)
+    print(recognizer.predict(filename))
