@@ -6,6 +6,24 @@ import requests
 import urllib.request
 import time
 from bs4 import BeautifulSoup
+from azure.storage.queue import QueueClient, QueueServiceClient, TextBase64DecodePolicy
+import base64
+
+def get_prediction_data():
+    '''Gets predictions made by media-classifier-api.
+
+    '''
+    queue = QueueClient(
+        account_url=os.getenv('AZ_QS_AC_URL'),
+        queue_name=os.getenv('AZ_QS_QUEUE_NAME'),
+        credential=os.getenv('AZ_QS_SAS_TOKEN'))
+    response = queue.receive_messages(messages_per_page=5)
+    for batch in response.by_page():
+        for message in batch:
+            with open('data/raw/predictions/' + message.id + '.json', 'wb') as f:
+                f.write(base64.b64decode(message.content))
+            queue.delete_message(message)
+    print(message)
 
 def get_kraken_data(path):
     '''Gets filenames from kraken and writes them to the raw data directory.

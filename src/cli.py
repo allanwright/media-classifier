@@ -8,7 +8,7 @@ Usage:
     mc predict <model> <filename>
 
 Arguments:
-    <source>    Source to aquire data from (pig, kraken, xerus, yak)
+    <source>    Source to aquire data from (pig, kraken, xerus, yak, predictions)
     <model>     Model to train/predict (baseline, cnn, ner)
     <filename>  The filename to evaluate
 '''
@@ -19,8 +19,7 @@ from src import datasets, preprocessing
 from src.models import baseline, cnn, ner
 
 def main():
-    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-    load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
+    load_dotenv()
     arguments = docopt(__doc__)
 
     if arguments['aquire']:
@@ -33,6 +32,8 @@ def main():
             datasets.get_xerus_data(os.getenv('XERUS_URL'))
         elif source == 'yak':
             datasets.get_yak_data(os.getenv('YAK_URL'))
+        elif source == 'predictions':
+            datasets.get_prediction_data()
         else:
             print('Invalid source')
     elif arguments['process']:
