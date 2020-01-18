@@ -6,7 +6,7 @@ import requests
 import urllib.request
 import time
 from bs4 import BeautifulSoup
-from azure.storage.queue import QueueClient, QueueServiceClient, TextBase64DecodePolicy
+from azure.storage.queue import QueueClient, QueueServiceClient
 import base64
 
 def get_prediction_data():
