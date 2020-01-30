@@ -20,8 +20,15 @@ def get_prediction_data():
     response = queue.receive_messages(messages_per_page=5)
     for batch in response.by_page():
         for message in batch:
-            with open('data/raw/predictions/' + message.id + '.json', 'wb') as f:
-                f.write(base64.b64decode(message.content))
+            # Sometimes the messages are base64 encoded and sometimes they are not
+            # I'm not exactly sure what is going on, but this will do the trick for now
+            try:
+                with open('data/raw/predictions/' + message.id + '.json', 'wb') as f:
+                    f.write(base64.b64decode(message.content))
+            except:
+                with open('data/raw/predictions/' + message.id + '.json', 'w') as f:
+                    f.write(message.content)
+            
             queue.delete_message(message)
     print(message)
 
