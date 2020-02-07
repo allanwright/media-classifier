@@ -20,17 +20,10 @@ def get_prediction_data():
     response = queue.receive_messages(messages_per_page=5)
     for batch in response.by_page():
         for message in batch:
-            # Sometimes the messages are base64 encoded and sometimes they are not
-            # I'm not exactly sure what is going on, but this will do the trick for now
-            try:
-                with open('data/raw/predictions/' + message.id + '.json', 'wb') as f:
-                    f.write(base64.b64decode(message.content))
-            except:
-                with open('data/raw/predictions/' + message.id + '.json', 'w') as f:
-                    f.write(message.content)
-            
+            print(message.content)
+            with open('data/raw/predictions/predictions.txt', 'a') as f:
+                f.write(message.content + '\n')
             queue.delete_message(message)
-    print(message)
 
 def get_kraken_data(path):
     '''Gets filenames from kraken and writes them to the raw data directory.
