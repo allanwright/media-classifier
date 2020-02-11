@@ -43,7 +43,7 @@ def train():
     pool_size = 3
     num_classes = 4 # TODO: Compute number of classes programmatically
 
-    x_train, y_train, x_test, y_test = datasets.get_train_test_data()
+    x_train, y_train, x_test, y_test, _, _ = datasets.get_train_test_data()
     tokenizer = text.Tokenizer(num_words=top_k)
     tokenizer.fit_on_texts(x_train)
     persistence.obj_to_bin(tokenizer, 'models/cls_cnn_tok.pickle')

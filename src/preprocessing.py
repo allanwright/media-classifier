@@ -125,15 +125,23 @@ def process_data():
     train, test = model_selection.train_test_split(df, test_size=0.2, random_state=123)
     x_train = train.drop('category', axis=1)
     y_train = train['category']
-    x_test = test.drop('category', axis=1)
-    y_test = test['category']
+    x_eval = test.drop('category', axis=1)
+    y_eval = test['category']
 
     # Save classification train and validation data
     print_progress('Saving data', df)
     x_train.to_csv('data/processed/x_train.csv', index=False, header=False)
     y_train.to_csv('data/processed/y_train.csv', index=False, header=False)
-    x_test.to_csv('data/processed/x_eval.csv', index=False, header=False)
-    y_test.to_csv('data/processed/y_eval.csv', index=False, header=False)
+    x_eval.to_csv('data/processed/x_eval.csv', index=False, header=False)
+    y_eval.to_csv('data/processed/y_eval.csv', index=False, header=False)
+
+    # Process test data
+    df = pd.read_csv('data/raw/predictions/predictions.csv')
+    df['name'] = df['name'].apply(preprocessing.prepare_input)
+    x_test = df['name']
+    y_test = df['class']
+    x_test.to_csv('data/processed/x_test.csv', index=False, header=False)
+    y_test.to_csv('data/processed/y_test.csv', index=False, header=False)
 
     # Process data for named entity recognition labelling
     process_data_for_ner()

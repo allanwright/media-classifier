@@ -12,7 +12,7 @@ def train():
     '''Trains the baseline model.
 
     '''
-    x_train, y_train, x_test, y_test = datasets.get_train_test_data()
+    x_train, y_train, x_test, y_test, _, _ = datasets.get_train_test_data()
     vectorizer = CountVectorizer()
     vectorizer.fit(x_train)
     x_train = vectorizer.transform(x_train)
