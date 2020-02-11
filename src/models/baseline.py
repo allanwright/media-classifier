@@ -12,10 +12,11 @@ def train():
     '''Trains the baseline model.
 
     '''
-    x_train, y_train, x_test, y_test, _, _ = datasets.get_train_test_data()
+    x_train, y_train, x_eval, y_eval, x_test, y_test = datasets.get_train_test_data()
     vectorizer = CountVectorizer()
     vectorizer.fit(x_train)
     x_train = vectorizer.transform(x_train)
+    x_eval = vectorizer.transform(x_eval)
     x_test = vectorizer.transform(x_test)
 
     max_iterations = 200
@@ -28,11 +29,15 @@ def train():
     classifier.fit(x_train, y_train)
 
     print('Testing baseline model on {sample_count} samples.'.format(
-        sample_count=x_test.shape[0]))
+        sample_count=x_eval.shape[0]))
+
+    score = classifier.score(x_eval, y_eval)
+
+    print('Baseline eval accuracy: {accuracy:.2f}%'.format(accuracy=score*100))
 
     score = classifier.score(x_test, y_test)
 
-    print('Baseline model accuracy: {accuracy}'.format(accuracy=score))
+    print('Baseline test accuracy: {accuracy:.2f}%'.format(accuracy=score*100))
 
     persistence.obj_to_bin(vectorizer, 'models/cls_base_vec.pickle')
     persistence.obj_to_bin(classifier, 'models/cls_base_mdl.pickle')
