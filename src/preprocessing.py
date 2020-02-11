@@ -132,8 +132,8 @@ def process_data():
     print_progress('Saving data', df)
     x_train.to_csv('data/processed/x_train.csv', index=False, header=False)
     y_train.to_csv('data/processed/y_train.csv', index=False, header=False)
-    x_test.to_csv('data/processed/x_test.csv', index=False, header=False)
-    y_test.to_csv('data/processed/y_test.csv', index=False, header=False)
+    x_test.to_csv('data/processed/x_eval.csv', index=False, header=False)
+    y_test.to_csv('data/processed/y_eval.csv', index=False, header=False)
 
     # Process data for named entity recognition labelling
     process_data_for_ner()

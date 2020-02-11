@@ -185,14 +185,14 @@ def get_train_test_data():
     Returns:
         x_train (numpy array): The training features.
         y_train (nunmpy array): The training labels.
-        x_test (numpy array): The test features.
-        y_test (numpy array): The test labels.
+        x_eval (numpy array): The evaluation features.
+        y_eval (numpy array): The evaluation labels.
     '''
     return (
         get_processed_data('x_train.csv'),
         get_processed_data('y_train.csv'),
-        get_processed_data('x_test.csv'),
-        get_processed_data('y_test.csv')
+        get_processed_data('x_eval.csv'),
+        get_processed_data('y_eval.csv')
     )
 
 
