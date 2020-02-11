@@ -23,24 +23,26 @@ def train():
     classifier = LogisticRegression(
         solver='lbfgs', multi_class='multinomial', max_iter=max_iterations)
     
-    print('Training baseline model on {sample_count} samples.'.format(
-        sample_count=x_train.shape[0]))
+    print(f'Training baseline model on {x_train.shape[0]} samples.')
     
     classifier.fit(x_train, y_train)
-
-    print('Testing baseline model on {sample_count} samples.'.format(
-        sample_count=x_eval.shape[0]))
-
-    score = classifier.score(x_eval, y_eval)
-
-    print('Baseline eval accuracy: {accuracy:.2f}%'.format(accuracy=score*100))
-
-    score = classifier.score(x_test, y_test)
-
-    print('Baseline test accuracy: {accuracy:.2f}%'.format(accuracy=score*100))
+    
+    score_model(classifier, x_eval, y_eval)
+    score_model(classifier, x_test, y_test)
 
     persistence.obj_to_bin(vectorizer, 'models/cls_base_vec.pickle')
     persistence.obj_to_bin(classifier, 'models/cls_base_mdl.pickle')
+
+def score_model(classifier, features, labels):
+    ''' Scores the accuracy of the baseline model.
+
+    Args:
+        classifier (object): The classifier.
+        features (array like): The features.
+        labels (array like): The labels.
+    '''
+    score = classifier.score(features, labels)
+    print(f'Baseline eval accuracy: {score*100:.2f}% on {features.shape[0]} samples')
 
 def predict(filename):
     ''' Makes a prediction using the baseline model.
@@ -55,12 +57,5 @@ def predict(filename):
     )
     label, confidence = classifier.predict(filename)
 
-    #vectorizer = persistence.bin_to_obj('models/cls_base_vec.pickle')
-    #x = preprocessing.prepare_input(filename)
-    #x = vectorizer.transform(np.array([x]))
-    #classifier = persistence.bin_to_obj('models/cls_base_mdl.pickle')
-    #y = classifier.predict_proba(x)
-    #np.set_printoptions(suppress=True)
-    #label, confidence = prediction.get_label(y)
     print('Predicted class \'{label}\' with {confidence:.2f}% confidence.'
         .format(label=label, confidence=confidence*100))
