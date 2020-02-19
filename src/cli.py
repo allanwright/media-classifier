@@ -8,7 +8,7 @@ Usage:
     mc predict <model> <filename>
 
 Arguments:
-    <source>    Source to aquire data from (pig, kraken, xerus, yak, predictions)
+    <source>    Source to aquire data from (pig, kraken, xerus, yak, prediction)
     <model>     Model to train/predict (baseline, cnn, ner)
     <filename>  The filename to evaluate
 '''
@@ -39,13 +39,7 @@ def main():
     elif arguments['process']:
         preprocessing.process_data()
     elif arguments['train']:
-        model = arguments['<model>']
-        if model == 'baseline':
-            baseline.train()
-        elif model == 'cnn':
-            cnn.train()
-        elif model == 'ner':
-            ner.train()
+        resolve_method(arguments['<model>'], 'train')()
     elif arguments['predict']:
         model = arguments['<model>']
         filename = arguments['<filename>']
@@ -55,6 +49,9 @@ def main():
             cnn.predict(filename)
         elif model == 'ner':
             ner.predict(filename)
+
+def resolve_method(module, method):
+    return getattr(globals()[module], method)
 
 if __name__ == '__main__':
     main()
