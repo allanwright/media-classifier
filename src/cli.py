@@ -20,10 +20,10 @@ from src.models import baseline, cnn, ner
 
 def main():
     load_dotenv()
-    arguments = docopt(__doc__)
+    args = docopt(__doc__)
 
-    if arguments['aquire']:
-        source = arguments['<source>']
+    if args['aquire']:
+        source = args['<source>']
         if source == 'kraken':
             datasets.get_kraken_data(os.getenv('KRAKEN_PATH'))
         elif source == 'pig':
@@ -36,13 +36,13 @@ def main():
             datasets.get_prediction_data()
         else:
             print('Invalid source')
-    elif arguments['process']:
+    elif args['process']:
         preprocessing.process_data()
-    elif arguments['train']:
-        resolve_method(arguments['<model>'], 'train')()
-    elif arguments['predict']:
-        model = arguments['<model>']
-        filename = arguments['<filename>']
+    elif args['train']:
+        resolve_method(args['<model>'], 'train')()
+    elif args['predict']:
+        model = args['<model>']
+        filename = args['<filename>']
         if model == 'baseline':
             baseline.predict(filename)
         elif model == 'cnn':
