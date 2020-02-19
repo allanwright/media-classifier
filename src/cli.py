@@ -24,18 +24,11 @@ def main():
 
     if args['aquire']:
         source = args['<source>']
-        if source == 'kraken':
-            datasets.get_kraken_data(os.getenv('KRAKEN_PATH'))
-        elif source == 'pig':
-            datasets.get_pig_data(os.getenv('PIG_PATH'))
-        elif source == 'xerus':
-            datasets.get_xerus_data(os.getenv('XERUS_URL'))
-        elif source == 'yak':
-            datasets.get_yak_data(os.getenv('YAK_URL'))
-        elif source == 'predictions':
-            datasets.get_prediction_data()
+        if source == 'prediction':
+            resolve_method(datasets, f'get_{source}_data')()
         else:
-            print('Invalid source')
+            path = os.getenv(f'{source}_PATH')
+            resolve_method(datasets, f'get_{source}_data')(path)
     elif args['process']:
         preprocessing.process_data()
     elif args['train']:
@@ -44,7 +37,10 @@ def main():
         resolve_method(args['<model>'], 'predict')(args['<filename>'])
 
 def resolve_method(module, method):
-    return getattr(globals()[module], method)
+    if isinstance(module, str):
+        return getattr(globals()[module], method)
+    else:
+        return getattr(module, method)
 
 if __name__ == '__main__':
     main()
