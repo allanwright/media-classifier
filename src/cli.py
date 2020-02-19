@@ -41,14 +41,7 @@ def main():
     elif args['train']:
         resolve_method(args['<model>'], 'train')()
     elif args['predict']:
-        model = args['<model>']
-        filename = args['<filename>']
-        if model == 'baseline':
-            baseline.predict(filename)
-        elif model == 'cnn':
-            cnn.predict(filename)
-        elif model == 'ner':
-            ner.predict(filename)
+        resolve_method(args['<model>'], 'predict')(args['<filename>'])
 
 def resolve_method(module, method):
     return getattr(globals()[module], method)
