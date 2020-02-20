@@ -2,13 +2,13 @@
 
 Usage:
     mc aquire <source>
-    mc clean
-    mc process
+    mc process <step>
     mc train <model>
     mc predict <model> <filename>
 
 Arguments:
     <source>    Source to aquire data from (pig, kraken, xerus, yak, prediction)
+    <step>      Processing step to run (all, merge, feature)
     <model>     Model to train/predict (baseline, cnn, ner)
     <filename>  The filename to evaluate
 '''
@@ -30,7 +30,8 @@ def main():
             path = os.getenv(f'{source}_PATH')
             resolve_method(datasets, f'get_{source}_data')(path)
     elif args['process']:
-        preprocessing.process_data()
+        step = args['<step>']
+        resolve_method(preprocessing, f'process_{step}')()
     elif args['train']:
         resolve_method(args['<model>'], 'train')()
     elif args['predict']:

@@ -11,7 +11,7 @@ from mccore import persistence
 from mccore import preprocessing
 
 def get_consolidated_raw_data(path):
-    '''Gets a pandas dataframe containing the contents of all raw data files.
+    ''' Gets a pandas dataframe containing the contents of all raw data files.
 
     The name of the folder used to store each file is used for the category
     column in the resulting dataframe.
@@ -37,10 +37,26 @@ def get_consolidated_raw_data(path):
                     consolidated = consolidated.append(df, ignore_index=True)
     return consolidated
 
-def process_data():
-    '''Processes the raw data files.
+def process_all():
+    ''' Performs all data processing steps.
+    '''
+    process_merge()
+    process_feature()
+
+def process_merge():
+    ''' Performs merging of data.
     '''
     df = get_consolidated_raw_data('data/raw')
+
+    print_progress('Saving merged data', df)
+
+    # Save interim output
+    df.to_csv('data/interim/combined.csv', index=False)
+
+def process_feature():
+    ''' Performs feature generation.
+    '''
+    df = pd.read_csv('data/interim/combined.csv')
 
     print_progress('Processing data for classification', df)
 
@@ -77,7 +93,7 @@ def process_data():
     df.drop_duplicates(subset=['name', 'category'], inplace=True)
 
     # Save interim output before processing further
-    df.to_csv('data/interim/combined.csv', index=False)
+    df.to_csv('data/interim/cleaned.csv', index=False)
 
     # Downsample to fix class imbalance
     print_progress('Balancing classes', df)
