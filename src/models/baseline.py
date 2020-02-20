@@ -1,7 +1,10 @@
+import datetime
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import plot_confusion_matrix
 from src import datasets
 from mccore import Classifier
 from mccore import persistence
@@ -27,22 +30,34 @@ def train():
     
     classifier.fit(x_train, y_train)
     
-    score_model(classifier, x_eval, y_eval)
-    score_model(classifier, x_test, y_test)
+    score_model(classifier, x_eval, y_eval, 'eval')
+    score_model(classifier, x_test, y_test, 'test')
 
     persistence.obj_to_bin(vectorizer, 'models/cls_base_vec.pickle')
     persistence.obj_to_bin(classifier, 'models/cls_base_mdl.pickle')
 
-def score_model(classifier, features, labels):
+    print(f'Training complete, check /results for model accuracy.')
+
+def score_model(classifier, features, labels, title):
     ''' Scores the accuracy of the baseline model.
 
     Args:
         classifier (object): The classifier.
         features (array like): The features.
         labels (array like): The labels.
+        title (string): The plot title.
     '''
-    score = classifier.score(features, labels)
-    print(f'Baseline eval accuracy: {score*100:.2f}% on {features.shape[0]} samples')
+    classes = persistence.json_to_obj('data/processed/label_dictionary.json')
+    plot_confusion_matrix(
+        estimator=classifier,
+        X=features,
+        y_true=labels,
+        display_labels=classes.values(),
+        normalize='true')
+    now = datetime.datetime.today().strftime('%Y%m%dT%H%M%S')
+    name = f'{now}_{title}'
+    plt.title(name)
+    plt.savefig(f'results/{name}.png')
 
 def predict(filename):
     ''' Makes a prediction using the baseline model.
