@@ -10,7 +10,7 @@ from sklearn.preprocessing import LabelEncoder
 from mccore import persistence
 from mccore import preprocessing
 
-def get_consolidated_raw_data(path):
+def get_consolidated_raw_data(path, excludes):
     ''' Gets a pandas dataframe containing the contents of all raw data files.
 
     The name of the folder used to store each file is used for the category
@@ -18,12 +18,15 @@ def get_consolidated_raw_data(path):
 
     Args:
         path (string): The path of the raw data.
+        excludes (array like): Any folders to exclude.
     
     Returns:
         DataFrame: The contents of all raw data files.
     '''
     consolidated = pd.DataFrame()
     for x in os.listdir(path):
+        if x in excludes:
+            continue
         x_path = '%s/%s' % (path, x)
         if os.path.isdir(x_path):
             print('Consolidating {path}'.format(path=x_path))
@@ -46,7 +49,7 @@ def process_all():
 def process_merge():
     ''' Performs merging of data.
     '''
-    df = get_consolidated_raw_data('data/raw')
+    df = get_consolidated_raw_data('data/raw', ['predictions'])
 
     print_progress('Saving merged data', df)
 
