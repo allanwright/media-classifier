@@ -18,7 +18,7 @@ df['name'] = df['name'].str.split('/').str[-1]
 df['name'] = df['name'].apply(preprocessing.prepare_input)
 
 # %%
-resolutions = [ '576p', '720p', '1080p', '2160p', '4k' ]
+resolutions = [ '480p', '576p', '720p', '1080p', '2160p', '4k' ]
 classes = [ 'movie', 'tv' ]
 
 # %%
