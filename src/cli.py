@@ -27,7 +27,7 @@ def main():
         if source == 'prediction':
             resolve_method(datasets, f'get_{source}_data')()
         else:
-            path = os.getenv(f'{source}_PATH')
+            path = os.getenv(f'{source.upper()}_URL')
             resolve_method(datasets, f'get_{source}_data')(path)
     elif args['process']:
         step = args['<step>']
