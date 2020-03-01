@@ -78,6 +78,29 @@ def process_feature():
     # Process filenames
     df['name'] = df['name'].apply(preprocessing.prepare_input)
 
+    # Augment training data with all resolutions
+    print_progress('Augmenting training data', df)
+    df['res'] = ''
+    resolutions = get_resolutions()
+    df_res = pd.DataFrame()
+
+    for res in resolutions:
+        if res == 'none':
+            continue
+        for other_res in resolutions:
+            if other_res == 'none' or res == other_res:
+                continue
+            df_other = df[df['res'].str.match(r'^%s$' % other_res)].copy()
+            df_other = df_other.copy()
+            df_other['name'] = df['name'].apply(replace_res, args=(res, other_res))
+            pd.concat([df_res, df_other])
+
+    #df = df.append(df_res)
+    pd.concat([df, df_res])
+    df = df.drop('res', axis=1)
+
+    df.to_csv('data/interim/augmented.csv')
+
     #Merge categories
     df.loc[df['category'] == 'game', 'category'] = 'app'
     
@@ -168,6 +191,11 @@ def process_feature():
     # Process labelled named entity recognition data (if any)
     process_labelled_ner_data()
 
+def replace_res(name, res, other_res):
+    words = name.split(' ')
+    words = [res if i == other_res else i for i in words]
+    return ' '.join(words)
+
 def apply_entity_names(row, nlp):
     doc = nlp(row['name'])
     for ent in doc.ents:
@@ -216,7 +244,7 @@ def process_data_for_ner():
     df.loc[(df['word'].isin(tv_ext)) & (df.category == 'tv'), 'entity'] = 'ext'
 
     # Label resolution
-    resolutions = ['576p', '720p', '1080p', '2160p', '4k']
+    resolutions = get_resolutions()
     df.loc[df['word'].isin(resolutions), 'entity'] = 'res'
 
     # Label encoding
@@ -277,6 +305,9 @@ def get_music_ext():
 
 def get_tv_ext():
     return [ 'mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v' ]
+
+def get_resolutions():
+    return [ '480p', '576p', '720p', '1080p', '2160p', '4k' ]
 
 def print_progress(message, df):
     print('{message} ({rows} rows)'.format(message=message, rows=df.shape[0]))
