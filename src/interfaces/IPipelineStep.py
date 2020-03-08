@@ -1,7 +1,7 @@
 from abc import abstractmethod
 
 class IPipelineStep():
-    ''' Defines an interface for a data pipeline step.
+    ''' Defines the interface for a data pipeline step.
 
     A data pipeline step represents a unit of work that is performed on a set of
     input data and produces a set of output data. The input and output data is
