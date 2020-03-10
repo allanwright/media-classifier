@@ -4,43 +4,14 @@ import pandas as pd
 import pickle
 import re
 
+from mccore import persistence
+from mccore import preprocessing
 import progressbar as pb
 from sklearn import model_selection
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import resample
 
-from mccore import persistence
-from mccore import preprocessing
-
-def get_consolidated_raw_data(path, excludes):
-    ''' Gets a pandas dataframe containing the contents of all raw data files.
-
-    The name of the folder used to store each file is used for the category
-    column in the resulting dataframe.
-
-    Args:
-        path (string): The path of the raw data.
-        excludes (array like): Any folders to exclude.
-    
-    Returns:
-        DataFrame: The contents of all raw data files.
-    '''
-    consolidated = pd.DataFrame()
-    for x in os.listdir(path):
-        if x in excludes:
-            continue
-        x_path = '%s/%s' % (path, x)
-        if os.path.isdir(x_path):
-            print('Consolidating {path}'.format(path=x_path))
-            for y in pb.progressbar(os.listdir(x_path)):
-                y_path = '%s/%s/%s' % (path, x, y)
-                if os.path.isfile(y_path):
-                    series = pd.read_csv(y_path, sep='\t', squeeze=True)
-                    df = pd.DataFrame(data={
-                        'name': series,
-                        'category': x})
-                    consolidated = consolidated.append(df, ignore_index=True)
-    return consolidated
+from src.pipelines.Process import Process
 
 def process_all():
     ''' Performs all data processing steps.
@@ -51,12 +22,8 @@ def process_all():
 def process_merge():
     ''' Performs merging of data.
     '''
-    df = get_consolidated_raw_data('data/raw', ['predictions'])
-
-    print_progress('Saving merged data', df)
-
-    # Save interim output
-    df.to_csv('data/interim/combined.csv', index=False)
+    pipeline = Process()
+    pipeline.run()
 
 def process_feature():
     ''' Performs feature generation.
