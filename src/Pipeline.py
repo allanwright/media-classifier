@@ -16,4 +16,6 @@ class Pipeline():
         ''' Runs the pipeline.
         '''
         for step in self.steps:
-            step.run()
+            step_input = step.get_input()
+            step_output = step.get_output()
+            step.run(step_input, step_output)
