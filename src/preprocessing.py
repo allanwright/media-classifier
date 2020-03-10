@@ -2,11 +2,13 @@ import json
 import os
 import pandas as pd
 import pickle
-import progressbar as pb
 import re
+
+import progressbar as pb
 from sklearn import model_selection
-from sklearn.utils import resample
 from sklearn.preprocessing import LabelEncoder
+from sklearn.utils import resample
+
 from mccore import persistence
 from mccore import preprocessing
 
