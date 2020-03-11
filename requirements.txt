@@ -13,3 +13,4 @@ numpy<1.17.0
 spacy
 git+https://github.com/allanwright/media-classifier-core
 azure-storage-queue
+mypy
