@@ -12,13 +12,18 @@ Arguments:
     <model>     Model to train/predict (baseline, cnn, ner)
     <filename>  The filename to evaluate
 '''
+
 import os
+
 from docopt import docopt
 from dotenv import load_dotenv
+
 from src import datasets, preprocessing
-from src.models import baseline, cnn, ner
 
 def main():
+    ''' The entry point of the package.
+
+    '''
     load_dotenv()
     args = docopt(__doc__)
 
@@ -38,6 +43,15 @@ def main():
         resolve_method(args['<model>'], 'predict')(args['<filename>'])
 
 def resolve_method(module, method):
+    ''' Resolves a method from the specified module and method name.
+
+    Args:
+        module (module or string): The module or the name of the module to resolve the method for.
+        method (string): The name of the method to resolve.
+
+    Returns:
+        method: The method.
+    '''
     if isinstance(module, str):
         return getattr(globals()[module], method)
     else:
