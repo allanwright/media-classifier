@@ -7,7 +7,7 @@ extension-pkg-whitelist=
 
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
-ignore=data
+ignore=
 
 # Add files or directories matching the regex patterns to the blacklist. The
 # regex matches against base names, not paths.
@@ -430,7 +430,10 @@ good-names=i,
            k,
            ex,
            Run,
-           _
+           _,
+           df,
+           x,
+           y
 
 # Include a hint for the correct naming format with invalid-name.
 include-naming-hint=no
