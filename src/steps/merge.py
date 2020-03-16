@@ -1,15 +1,22 @@
+'''Defines a pipeline step which merges training data.
+
+'''
+
 import os
+
 import pandas as pd
 import progressbar as pb
-from src.IPipelineStep import IPipelineStep
 
-class Merge(IPipelineStep):
-    ''' Defines a pipeline step which merges training data from separate files
-        into a single output file.    
+from src.step import Step
+
+class Merge(Step):
+    '''Defines a pipeline step which merges training data.
+
     '''
 
     def __init__(self):
-        ''' Initializes a new instance of the Merge object.
+        '''Initializes a new instance of the Merge object.
+
         '''
         self.input = {
             'path': 'data/raw',
@@ -18,9 +25,10 @@ class Merge(IPipelineStep):
         self.output = {
             'path': 'data/interim/combined.csv',
         }
-    
+
     def run(self):
-        ''' Runs the pipeline step.
+        '''Runs the pipeline step.
+
         '''
         path = self.input['path']
         excludes = self.input['excludes']
@@ -41,4 +49,7 @@ class Merge(IPipelineStep):
         consolidated.to_csv(self.output['path'], index=False)
 
 def print_progress(message, df):
+    '''Prints a message about the progress of the pipeline step.
+
+    '''
     print('{message} ({rows} rows)'.format(message=message, rows=df.shape[0]))
