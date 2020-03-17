@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 from src import datasets, preprocessing
 
 def main():
-    ''' The entry point of the package.
+    '''The entry point of the package.
 
     '''
     load_dotenv()
@@ -43,7 +43,7 @@ def main():
         resolve_method(args['<model>'], 'predict')(args['<filename>'])
 
 def resolve_method(module, method):
-    ''' Resolves a method from the specified module and method name.
+    '''Resolves a method from the specified module and method name.
 
     Args:
         module (module or string): The module or the name of the module to resolve the method for.
