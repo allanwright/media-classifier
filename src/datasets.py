@@ -1,13 +1,16 @@
+'''Aquisition of data for training.
+
+'''
+
 import http
 import os
+import requests
+
+from bs4 import BeautifulSoup
+from azure.storage.queue import QueueClient
 import numpy as np
 import pandas as pd
-import requests
-import urllib.request
-import time
-from bs4 import BeautifulSoup
-from azure.storage.queue import QueueClient, QueueServiceClient
-import base64
+
 
 def get_prediction_data():
     '''Gets predictions made by media-classifier-api.
@@ -99,7 +102,7 @@ def get_local_files(base_path):
 
     Args:
         base_path (string): The base directory to search for files.
-    
+
     Returns:
         list: The list of files.
     '''
@@ -118,7 +121,7 @@ def get_xerus_files(base_url, search_path):
     Args:
         base_url (string): The base url of the website.
         search_path (string): The relative path to search for files.
-    
+
     Returns:
         list: The list of files.
     '''
@@ -126,13 +129,13 @@ def get_xerus_files(base_url, search_path):
     response = requests.get(base_url + search_path)
     soup = BeautifulSoup(response.text, 'html.parser')
     anchors = soup.select('td.name a:nth-of-type(2)')
-    for a in anchors:
-        print('Scraping: %s' % a['href'])
-        item_response = requests.get('%s%s' % (base_url, a['href']))
+    for anchor in anchors:
+        print('Scraping: %s' % anchor['href'])
+        item_response = requests.get('%s%s' % (base_url, anchor['href']))
         item_soup = BeautifulSoup(item_response.text, 'html.parser')
         list_items = item_soup.select('#files li')
-        for li in list_items:
-            files.append(li.text)
+        for item in list_items:
+            files.append(item.text)
     return files
 
 def get_yak_files(base_url, search_path):
@@ -141,7 +144,7 @@ def get_yak_files(base_url, search_path):
     Args:
         base_url (string): The base url of the website.
         search_path (string): The relative path to search for files.
-    
+
     Returns:
         list: The list of files.
     '''
@@ -149,18 +152,18 @@ def get_yak_files(base_url, search_path):
     response = requests.get(base_url + search_path)
     soup = BeautifulSoup(response.text, 'html.parser')
     anchors = soup.select('.tt-name a:nth-of-type(2)')
-    for a in anchors:
+    for anchor in anchors:
         while True:
             try:
-                print('Scraping: {href}'.format(href=a['href']))
-                item_response = requests.get('{url}{href}'
-                    .format(url=base_url, href=a['href']))
+                print('Scraping: {href}'.format(href=anchor['href']))
+                item_response = requests.get(
+                    '{url}{href}'.format(url=base_url, href=anchor['href']))
                 item_soup = BeautifulSoup(item_response.text, 'html.parser')
                 list_items = item_soup.select('.fileline')
-                for li in list_items:
-                    for s in li.text.split('\xa0'):
-                        if s:
-                            files.append(s)
+                for item in list_items:
+                    for substring in item.text.split('\xa0'):
+                        if substring:
+                            files.append(substring)
                 break
             except http.client.RemoteDisconnected:
                 print('Retrying: Remote host disconnected')
@@ -169,15 +172,15 @@ def get_yak_files(base_url, search_path):
                 break
     return files
 
-def write_list_to_file(list, path):
+def write_list_to_file(items, path):
     '''Writes the contents of a list to the specified file path.
 
     Args:
-        list (list): The list to write.
+        items (list): The list to write.
         path (string): The file to write to.
     '''
     with open(path, 'w', encoding='utf-8') as f:
-        [f.write('%s\n' % item) for item in list]
+        _ = [f.write('%s\n' % item) for item in items]
 
 def get_train_test_data():
     '''Reads the processed and split train/test data.
@@ -201,5 +204,10 @@ def get_train_test_data():
 
 
 def get_processed_data(name):
+    '''Reads the specified file and returns the contents as a flattened array.
+
+    Args:
+        name (string): The name (and path) of the file to read.
+    '''
     df = pd.read_csv('data/processed/' + name, header=None)
     return np.ravel(df[0].to_numpy())
