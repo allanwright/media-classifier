@@ -51,5 +51,8 @@ class Merge(Step):
 def print_progress(message, df):
     '''Prints a message about the progress of the pipeline step.
 
+    Args:
+        message (string): The message to print.
+        df (DataFrame): The DataFrame being used for processing.
     '''
     print('{message} ({rows} rows)'.format(message=message, rows=df.shape[0]))
