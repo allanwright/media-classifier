@@ -1,32 +1,36 @@
+'''Aquisition of data for training.
+
+'''
+
 import json
-import os
-import pandas as pd
 import pickle
-import re
 
 from mccore import persistence
 from mccore import preprocessing
-import progressbar as pb
 from sklearn import model_selection
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import resample
+import pandas as pd
 
-from src.pipelines.Process import Process
+from src.pipelines.process import Process
 
 def process_all():
     ''' Performs all data processing steps.
+
     '''
     process_merge()
     process_feature()
 
 def process_merge():
     ''' Performs merging of data.
+
     '''
     pipeline = Process()
     pipeline.run()
 
 def process_feature():
     ''' Performs feature generation.
+
     '''
     df = pd.read_csv('data/interim/combined.csv')
 
@@ -40,7 +44,7 @@ def process_feature():
     ext = df['name'].str.extract(r'\.(\w{3})$')
     ext.columns = ['ext']
     df['ext'] = ext['ext']
-    
+
     # Remove paths from filenames
     df['name'] = df['name'].str.split('/').str[-1]
 
@@ -61,7 +65,7 @@ def process_feature():
                 continue
             df_other = df[df['res'].str.match(r'^%s$' % other_res)].copy()
             df_other = df_other.copy()
-            df_other['name'] = df['name'].apply(replace_res, args=(res, other_res))
+            df_other['name'] = df['name'].apply(find_and_replace, args=(res, other_res))
             pd.concat([df_res, df_other])
 
     #df = df.append(df_res)
@@ -72,7 +76,7 @@ def process_feature():
 
     #Merge categories
     df.loc[df['category'] == 'game', 'category'] = 'app'
-    
+
     # Remove junk filenames
     music_ext = get_music_ext()
     movie_ext = get_movie_ext()
@@ -83,7 +87,7 @@ def process_feature():
             ((df['category'] == 'movie') & (df['ext'].isin(movie_ext))) |
             ((df['category'] == 'tv') & (df['ext'].isin(tv_ext))) |
             ((df['category'] == 'app') & (df['ext'].isin(app_ext)))]
-    
+
     # Remove duplicates by filename and category
     df.drop_duplicates(subset=['name', 'category'], inplace=True)
 
@@ -104,19 +108,19 @@ def process_feature():
     df.to_csv('data/interim/balanced.csv', index=False)
 
     # Encode labels
-    labelEncoder = LabelEncoder()
-    labelEncoder.fit(df['category'])
-    df['category'] = labelEncoder.transform(df['category'])
+    label_encoder = LabelEncoder()
+    label_encoder.fit(df['category'])
+    df['category'] = label_encoder.transform(df['category'])
 
     # Save label encoding
     category_ids = df.category.unique()
-    category_names = labelEncoder.inverse_transform(category_ids)
+    category_names = label_encoder.inverse_transform(category_ids)
     category_dict = {}
     for i in range(len(category_ids)):
         category_dict[int(category_ids[i])] = category_names[i]
     persistence.obj_to_json(
         category_dict, 'data/processed/label_dictionary.json')
-    
+
     # Create named entity columns
     df['title'] = ''
     df['source'] = ''
@@ -160,9 +164,19 @@ def process_feature():
     # Process labelled named entity recognition data (if any)
     process_labelled_ner_data()
 
-def replace_res(name, res, other_res):
-    words = name.split(' ')
-    words = [res if i == other_res else i for i in words]
+def find_and_replace(sentence, find, replace):
+    '''Finds a word in a sentence and replaces it with another word.
+
+    Args:
+        sentence (string): The sentence to perform the find and replace.
+        find (string): The word to find.
+        replace (string): The word to use for replacement.
+
+    Returns:
+        string: The sentence.
+    '''
+    words = sentence.split(' ')
+    words = [find if i == replace else i for i in words]
     return ' '.join(words)
 
 def apply_entity_names(row, nlp):
@@ -171,6 +185,9 @@ def apply_entity_names(row, nlp):
         print(ent)
 
 def process_data_for_ner():
+    '''Processes data for named entity recognition.
+
+    '''
     df = pd.read_csv('data/interim/combined.csv')
     print_progress('Processing data for named entity recognition', df)
 
@@ -239,6 +256,9 @@ def process_data_for_ner():
     df.to_csv('data/interim/stacked.csv', index=False)
 
 def process_labelled_ner_data():
+    '''Processes labelled data for named entity recongition.
+
+    '''
     df = pd.read_csv('data/interim/ner_labelled.csv')
 
     # Keep only word and corresponding label
@@ -250,100 +270,133 @@ def process_labelled_ner_data():
         sep='\t',
         header=False,
         index=False)
-    
+
     # Convert from tsv to json
     tsv_to_json_format(
         "data/interim/ner_labelled.tsv",
         'data/interim/ner_labelled.json',
         'na')
-    
+
     # Write out spacy file
     write_spacy_file(
         'data/interim/ner_labelled.json',
         'data/processed/ner_labelled.pickle')
 
 def get_app_ext():
-    return [ 'exe', 'bin', 'zip', 'rar', 'iso',
-             'cab', 'dll', 'msi', 'dmg', 'dat' ]
+    '''Get app file extensions.
+
+    '''
+    return ['exe', 'bin', 'zip', 'rar', 'iso', 'cab', 'dll', 'msi', 'dmg', 'dat']
 
 def get_movie_ext():
-    return [ 'mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v' ]
+    '''Get movie file extensions.
+
+    '''
+    return ['mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v']
 
 def get_music_ext():
-    return [ 'mp3', 'm4a', 'ogg', 'flac', 'wav' ]
+    '''Get music file extensions.
+
+    '''
+    return ['mp3', 'm4a', 'ogg', 'flac', 'wav']
 
 def get_tv_ext():
-    return [ 'mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v' ]
+    '''Get tv file extensions.
+
+    '''
+    return ['mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v']
 
 def get_resolutions():
-    return [ '480p', '576p', '720p', '1080p', '2160p', '4k' ]
+    '''Get resolutions.
+
+    '''
+    return ['480p', '576p', '720p', '1080p', '2160p', '4k']
 
 def print_progress(message, df):
+    '''Prints a message about the progress of the data processing.
+
+    Args:
+        message (string): The message to print.
+        df (DataFrame): The current DataFrame.
+    '''
     print('{message} ({rows} rows)'.format(message=message, rows=df.shape[0]))
 
-def tsv_to_json_format(input_path,output_path,unknown_label):
+def tsv_to_json_format(input_path, output_path, unknown_label):
+    '''Converts TSV data to JSON.
+
+    Args:
+        input_path (string): The input path.
+        output_path (string): the output path.
+        unknown_label (string): The label to use for unknown entities.
+    '''
     try:
-        f=open(input_path,'r') # input file
-        fp=open(output_path, 'w') # output file
-        data_dict={}
-        annotations =[]
-        label_dict={}
-        s=''
-        start=0
-        for line in f:
-            word,entity=line.split('\t')
-            s+=word+" "
-            entity=entity[:len(entity)-1]
-            if entity!=unknown_label:
+        input_file = open(input_path, 'r') # input file
+        output_file = open(output_path, 'w') # output file
+        data_dict = {}
+        annotations = []
+        label_dict = {}
+        words = ''
+        start = 0
+        for line in input_file:
+            word, entity = line.split('\t')
+            words += word + " "
+            entity = entity[:len(entity)-1]
+            if entity != unknown_label:
                 if len(entity) != 1:
-                    d={}
-                    d['text']=word
-                    d['start']=start
-                    d['end']=start+len(word)-1  
+                    d = {}
+                    d['text'] = word
+                    d['start'] = start
+                    d['end'] = start+len(word) - 1
                     try:
                         label_dict[entity].append(d)
                     except:
-                        label_dict[entity]=[]
-                        label_dict[entity].append(d) 
-            start+=len(word)+1
+                        label_dict[entity] = []
+                        label_dict[entity].append(d)
+            start += len(word) + 1
             if entity == 'extension':
-                data_dict['content']=s
-                s=''
-                label_list=[]
+                data_dict['content'] = words
+                words = ''
+                label_list = []
                 for ents in list(label_dict.keys()):
                     for i in range(len(label_dict[ents])):
-                        if(label_dict[ents][i]['text']!=''):
-                            l=[ents,label_dict[ents][i]]
-                            for j in range(i+1,len(label_dict[ents])): 
-                                if(label_dict[ents][i]['text']==label_dict[ents][j]['text']):  
-                                    di={}
-                                    di['start']=label_dict[ents][j]['start']
-                                    di['end']=label_dict[ents][j]['end']
-                                    di['text']=label_dict[ents][i]['text']
+                        if label_dict[ents][i]['text'] != '':
+                            l = [ents, label_dict[ents][i]]
+                            for j in range(i + 1, len(label_dict[ents])):
+                                if label_dict[ents][i]['text'] == label_dict[ents][j]['text']:
+                                    di = {}
+                                    di['start'] = label_dict[ents][j]['start']
+                                    di['end'] = label_dict[ents][j]['end']
+                                    di['text'] = label_dict[ents][i]['text']
                                     l.append(di)
-                                    label_dict[ents][j]['text']=''
-                            label_list.append(l)                          
-                            
+                                    label_dict[ents][j]['text'] = ''
+                            label_list.append(l)
+
                 for entities in label_list:
-                    label={}
-                    label['label']=[entities[0]]
-                    label['points']=entities[1:]
+                    label = {}
+                    label['label'] = [entities[0]]
+                    label['points'] = entities[1:]
                     annotations.append(label)
-                data_dict['annotation']=annotations
-                annotations=[]
-                json.dump(data_dict, fp)
-                fp.write('\n')
-                data_dict={}
-                start=0
-                label_dict={}
+                data_dict['annotation'] = annotations
+                annotations = []
+                json.dump(data_dict, output_file)
+                output_file.write('\n')
+                data_dict = {}
+                start = 0
+                label_dict = {}
     except Exception as e:
         print("Unable to process file" + "\n" + "error = " + str(e))
         return None
 
 def write_spacy_file(input_file=None, output_file=None):
+    '''Writes the specified input to a spacy file.
+
+    Args:
+        input_file (file): The input file.
+        output_file (file): the output file.
+    '''
     try:
         training_data = []
-        lines=[]
+        lines = []
         with open(input_file, 'r') as f:
             lines = f.readlines()
 
@@ -358,8 +411,8 @@ def write_spacy_file(input_file=None, output_file=None):
                     labels = [labels]
 
                 for label in labels:
-                    entities.append((point['start'], point['end'] + 1 ,label))
-            
+                    entities.append((point['start'], point['end'] + 1, label))
+
             training_data.append((text, {"entities" : entities}))
 
         with open(output_file, 'wb') as fp:
