@@ -6,7 +6,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import plot_confusion_matrix
 from src import datasets
-from mccore import Classifier
+from mccore.classifier import Classifier
 from mccore import persistence
 from mccore import prediction
 from mccore import preprocessing

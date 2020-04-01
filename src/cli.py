@@ -20,6 +20,9 @@ from dotenv import load_dotenv
 
 from src import datasets, preprocessing
 
+# pylint: disable=unused-import
+from src.models import baseline, cnn, ner
+
 def main():
     '''The entry point of the package.
 

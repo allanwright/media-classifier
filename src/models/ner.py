@@ -2,7 +2,7 @@
 import random
 import spacy
 from spacy.util import minibatch, compounding
-from mccore import EntityRecognizer
+from mccore.entity_recognizer import EntityRecognizer
 from mccore import ner
 from mccore import persistence
 
