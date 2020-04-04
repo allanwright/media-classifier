@@ -1,15 +1,17 @@
+'''Logisitc regression model for classifying filenames.
+
+'''
+
 import datetime
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
+
+from mccore.classifier import Classifier
+from mccore import persistence
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import plot_confusion_matrix
+import matplotlib.pyplot as plt
+
 from src import datasets
-from mccore.classifier import Classifier
-from mccore import persistence
-from mccore import prediction
-from mccore import preprocessing
 
 def train():
     '''Trains the baseline model.
@@ -25,11 +27,11 @@ def train():
     max_iterations = 200
     classifier = LogisticRegression(
         solver='lbfgs', multi_class='multinomial', max_iter=max_iterations)
-    
+
     print(f'Training baseline model on {x_train.shape[0]} samples.')
-    
+
     classifier.fit(x_train, y_train)
-    
+
     score_model(classifier, x_eval, y_eval, 'eval')
     score_model(classifier, x_test, y_test, 'test')
 
@@ -73,4 +75,4 @@ def predict(filename):
     label, confidence = classifier.predict(filename)
 
     print('Predicted class \'{label}\' with {confidence:.2f}% confidence.'
-        .format(label=label, confidence=confidence*100))
+          .format(label=label, confidence=confidence*100))
