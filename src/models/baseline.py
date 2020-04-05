@@ -4,7 +4,7 @@
 
 import datetime
 
-from mccore.classifier import Classifier
+from mccore import Classifier
 from mccore import persistence
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression

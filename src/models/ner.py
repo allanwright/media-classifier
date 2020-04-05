@@ -1,8 +1,6 @@
-#from __future__ import unicode_literals, print_function
 import random
-import spacy
 from spacy.util import minibatch, compounding
-from mccore.entity_recognizer import EntityRecognizer
+from mccore import EntityRecognizer
 from mccore import ner
 from mccore import persistence
 
@@ -32,7 +30,7 @@ def train():
                 texts, annotations = zip(*batch)
                 nlp.update(texts, annotations, drop=0.5, losses=losses)
             print("Losses", losses)
-    
+
     persistence.obj_to_bin(nlp.to_bytes(), 'models/ner_mdl.pickle')
 
 def predict(filename):
