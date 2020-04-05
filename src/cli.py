@@ -57,8 +57,8 @@ def resolve_method(module, method):
     '''
     if isinstance(module, str):
         return getattr(globals()[module], method)
-    else:
-        return getattr(module, method)
+
+    return getattr(module, method)
 
 if __name__ == '__main__':
     main()
