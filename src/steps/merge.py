@@ -7,6 +7,7 @@ import os
 import pandas as pd
 import progressbar as pb
 
+from src.diagnostics import stopwatch
 from src.step import Step
 
 class Merge(Step):
@@ -26,6 +27,7 @@ class Merge(Step):
             'path': 'data/interim/combined.csv',
         }
 
+    @stopwatch
     def run(self):
         '''Runs the pipeline step.
 
