@@ -20,7 +20,7 @@ class Merge(Step):
         '''
         self.input = {
             'path': 'data/raw',
-            'excludes': ['predictions']
+            'excludes': ['data/raw/predictions']
         }
         self.output = {
             'path': 'data/interim/combined.csv',
@@ -33,18 +33,15 @@ class Merge(Step):
         path = self.input['path']
         excludes = self.input['excludes']
         consolidated = pd.DataFrame()
-        for x in os.listdir(path):
-            if x in excludes:
+        for root, _, files in os.walk(path):
+            if root == path or root in excludes:
                 continue
-            x_path = '%s/%s' % (path, x)
-            if os.path.isdir(x_path):
-                print('Consolidating {path}'.format(path=x_path))
-                for y in pb.progressbar(os.listdir(x_path)):
-                    y_path = '%s/%s/%s' % (path, x, y)
-                    if os.path.isfile(y_path):
-                        series = pd.read_csv(y_path, sep='\t', squeeze=True)
-                        df = pd.DataFrame(data={'name': series, 'category': x})
-                        consolidated = consolidated.append(df, ignore_index=True)
+            else:
+                print('Consolidating {path}'.format(path=root))
+                for file in pb.progressbar(files):
+                    series = pd.read_csv(os.path.join(root, file), sep='\t', squeeze=True)
+                    df = pd.DataFrame(data={'name': series, 'category': root.split('/')[-1]})
+                    consolidated = consolidated.append(df, ignore_index=True)
         print_progress('Saving merged data', consolidated)
         consolidated.to_csv(self.output['path'], index=False)
 
