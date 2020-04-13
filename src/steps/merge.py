@@ -37,19 +37,10 @@ class Merge(Step):
             if root == path or root in excludes:
                 continue
             else:
-                print('Consolidating {path}'.format(path=root))
+                self.print('Consolidating {path}', path=root)
                 for file in pb.progressbar(files):
                     series = pd.read_csv(os.path.join(root, file), sep='\t', squeeze=True)
                     df = pd.DataFrame(data={'name': series, 'category': root.split('/')[-1]})
                     consolidated = consolidated.append(df, ignore_index=True)
-        print_progress('Saving merged data', consolidated)
+        self.print('Saving merged data ({rows} rows)', rows=consolidated.shape[0])
         consolidated.to_csv(self.output['path'], index=False)
-
-def print_progress(message, df):
-    '''Prints a message about the progress of the pipeline step.
-
-    Args:
-        message (string): The message to print.
-        df (DataFrame): The DataFrame being used for processing.
-    '''
-    print('{message} ({rows} rows)'.format(message=message, rows=df.shape[0]))
