@@ -15,7 +15,7 @@ class Step():
 
         '''
 
-    def print(self, message, **kwargs):
+    def print(self, message: str, **kwargs):
         '''Prints a message about the progress of the pipeline step.
 
         Args:
