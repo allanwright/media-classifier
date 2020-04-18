@@ -4,7 +4,7 @@
 
 from src.pipelines.process import Process
 from src.steps.merge import Merge
-from src.steps.prepare import Prepare
+from src.steps.prepare_classification_data import PrepareClassificationData
 
 def process_all():
     ''' Performs all data processing steps.
@@ -24,5 +24,5 @@ def process_feature():
     ''' Performs feature generation.
 
     '''
-    prepare = Prepare()
+    prepare = PrepareClassificationData()
     prepare.run()

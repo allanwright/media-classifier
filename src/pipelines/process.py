@@ -4,7 +4,7 @@
 
 from src.pipeline import Pipeline
 from src.steps.merge import Merge
-from src.steps.prepare import Prepare
+from src.steps.prepare_classification_data import PrepareClassificationData
 
 class Process(Pipeline):
     '''Defines a processing pipeline that prepares data for training.
@@ -17,4 +17,4 @@ class Process(Pipeline):
         '''
         super(Process, self).__init__()
         self.add_step(Merge())
-        self.add_step(Prepare())
+        self.add_step(PrepareClassificationData())
