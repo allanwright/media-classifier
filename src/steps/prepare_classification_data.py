@@ -1,4 +1,5 @@
-'''Defines a pipeline step which prepares training and test data.
+'''Defines a pipeline step which prepares training and test data for
+media classification.
 
 '''
 
