@@ -24,7 +24,7 @@ def get_prediction_data():
     for batch in response.by_page():
         for message in batch:
             print(message.content)
-            with open('data/raw/predictions/predictions.csv', 'a') as f:
+            with open('data/predictions/predictions.csv', 'a') as f:
                 f.write(message.content + '\n')
             queue.delete_message(message)
 
