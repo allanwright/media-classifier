@@ -18,9 +18,13 @@ class Merge(Step):
         '''Initializes a new instance of the Merge object.
 
         '''
+        super(Merge, self).__init__()
         self.input = {
-            'path': 'data/raw',
-            'excludes': ['data/raw/predictions']
+            'app': 'data/raw/app',
+            'game': 'data/raw/games',
+            'movie': 'data/raw/movie',
+            'music': 'data/raw/music',
+            'tv': 'data/raw/tv',
         }
         self.output = {
             'path': 'data/interim/combined.csv',
@@ -30,13 +34,9 @@ class Merge(Step):
         '''Runs the pipeline step.
 
         '''
-        path = self.input['path']
-        excludes = self.input['excludes']
         consolidated = pd.DataFrame()
-        for root, _, files in os.walk(path):
-            if root == path or root in excludes:
-                continue
-            else:
+        for path in self.input.values():
+            for root, _, files in os.walk(path):
                 self.print('Consolidating {path}', path=root)
                 for file in pb.progressbar(files):
                     series = pd.read_csv(os.path.join(root, file), sep='\t', squeeze=True)
