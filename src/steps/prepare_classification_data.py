@@ -22,9 +22,10 @@ class PrepareClassificationData(Step):
     '''
 
     def __init__(self):
+        super(PrepareClassificationData, self).__init__()
         self.input = {
             'combined': 'data/interim/combined.csv',
-            'predictions': 'data/raw/predictions/predictions.csv',
+            'predictions': 'data/predictions/predictions.csv',
             'ner_labelled_csv': 'data/interim/ner_labelled.csv',
         }
         self.output = {
