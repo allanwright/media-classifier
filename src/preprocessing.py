@@ -6,6 +6,8 @@ from src.pipelines.process import Process
 from src.steps.merge import Merge
 from src.steps.prepare_classification_data import PrepareClassificationData
 
+# TODO: Fix docstring spacing
+
 def process_all():
     ''' Performs all data processing steps.
 
