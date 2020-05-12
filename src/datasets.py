@@ -7,26 +7,18 @@ import os
 import requests
 
 from bs4 import BeautifulSoup
-from azure.storage.queue import QueueClient
 import numpy as np
 import pandas as pd
+
+from src.pipelines.get_prediction_data import GetPredictionData
 
 
 def get_prediction_data():
     '''Gets predictions made by media-classifier-api.
 
     '''
-    queue = QueueClient(
-        account_url=os.getenv('AZ_QS_AC_URL'),
-        queue_name=os.getenv('AZ_QS_QUEUE_NAME'),
-        credential=os.getenv('AZ_QS_SAS_TOKEN'))
-    response = queue.receive_messages(messages_per_page=5)
-    for batch in response.by_page():
-        for message in batch:
-            print(message.content)
-            with open('data/predictions/predictions.csv', 'a') as f:
-                f.write(message.content + '\n')
-            queue.delete_message(message)
+    pipeline = GetPredictionData()
+    pipeline.run()
 
 def get_kraken_data(path):
     '''Gets filenames from kraken and writes them to the raw data directory.
