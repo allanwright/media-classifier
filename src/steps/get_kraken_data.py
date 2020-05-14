@@ -18,7 +18,7 @@ class GetKrakenData(Step):
         '''
         super(GetKrakenData, self).__init__()
         self.input = {
-            'path': os.getenv('KRAKEN_URL'),
+            'path': os.getenv('KRAKEN_PATH'),
         }
         self.output = {
             'movie': 'data/raw/movies/kraken.txt',
