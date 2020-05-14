@@ -10,30 +10,23 @@ from bs4 import BeautifulSoup
 import numpy as np
 import pandas as pd
 
-from src.pipelines.get_prediction_data import GetPredictionData
+from src.steps.get_prediction_data import GetPredictionData
+from src.steps.get_kraken_data import GetKrakenData
 
 
 def get_prediction_data():
     '''Gets predictions made by media-classifier-api.
 
     '''
-    pipeline = GetPredictionData()
-    pipeline.run()
+    step = GetPredictionData()
+    step.run()
 
-def get_kraken_data(path):
+def get_kraken_data():
     '''Gets filenames from kraken and writes them to the raw data directory.
 
-    Args:
-        path (string): The base directory to search for files.
     '''
-    paths = [
-        ['movie', 'data/raw/movies/kraken.txt'],
-        ['music', 'data/raw/music/kraken.txt'],
-        ['tv', 'data/raw/tv/kraken.txt']
-    ]
-
-    for i in paths:
-        write_list_to_file(get_local_files(path % i[0]), i[1])
+    step = GetKrakenData()
+    step.run()
 
 def get_pig_data(path):
     '''Gets filenames from pig and writes them to the raw data directory.
