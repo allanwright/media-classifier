@@ -1,4 +1,4 @@
-'''Defines a processing pipeline that aquires prediction data.
+'''Defines a processing pipeline that aquires training and test data.
 
 '''
 
@@ -6,7 +6,7 @@ from src.pipeline import Pipeline
 from src.steps.get_prediction_data import GetPredictionData
 
 class AquireData(Pipeline):
-    '''Defines a processing pipeline that aquires training data.
+    '''Defines a processing pipeline that aquires training and test data.
 
     '''
 
