@@ -1,27 +1,27 @@
 '''Media-Classifier CLI
 
 Usage:
-    mc aquire <source>
-    mc process <step>
+    mc run <pipeline>
     mc train <model>
     mc predict <model> <filename>
 
 Arguments:
-    <source>    Source to aquire data from (pig, kraken, xerus, yak, prediction)
-    <step>      Processing step to run (all, merge, feature)
-    <model>     Model to train/predict (baseline, cnn, ner)
-    <filename>  The filename to evaluate
-'''
+    <pipeline>      The name of the pipeline to run
+    <model>         Model to train/predict (baseline, cnn, ner)
+    <filename>      The filename to evaluate
 
-import os
+Pipelines:
+    <aquiredata>    Aquires training and test data
+    <process>       Processes training and test data
+'''
 
 from docopt import docopt
 from dotenv import load_dotenv
 
-from src import datasets, preprocessing
-
 # pylint: disable=unused-import
 from src.models import baseline, cnn, ner
+from src.pipelines.aquire_data import AquireData as aquiredata
+from src.pipelines.process import Process as process
 
 def main():
     '''The entry point of the package.
@@ -30,31 +30,18 @@ def main():
     load_dotenv()
     args = docopt(__doc__)
 
-    if args['aquire']:
-        source = args['<source>']
-        if source == 'prediction':
-            resolve_method(datasets, f'get_{source}_data')()
-        else:
-            path = os.getenv(f'{source.upper()}_URL')
-            resolve_method(datasets, f'get_{source}_data')(path)
-    elif args['process']:
-        step = args['<step>']
-        resolve_method(preprocessing, f'process_{step}')()
+    if args['run']:
+        pipeline = __resolve_class(args['<pipeline>'])()
+        pipeline.run()
     elif args['train']:
-        resolve_method(args['<model>'], 'train')()
+        __resolve_method(args['<model>'], 'train')()
     elif args['predict']:
-        resolve_method(args['<model>'], 'predict')(args['<filename>'])
+        __resolve_method(args['<model>'], 'predict')(args['<filename>'])
 
-def resolve_method(module, method):
-    '''Resolves a method from the specified module and method name.
+def __resolve_class(name):
+    return globals()[name]
 
-    Args:
-        module (module or string): The module or the name of the module to resolve the method for.
-        method (string): The name of the method to resolve.
-
-    Returns:
-        method: The method.
-    '''
+def __resolve_method(module, method):
     if isinstance(module, str):
         return getattr(globals()[module], method)
 
