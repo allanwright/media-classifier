@@ -7,7 +7,7 @@ Usage:
 
 Arguments:
     <pipeline>      The name of the pipeline to run
-    <model>         Model to train/predict (baseline, cnn, ner)
+    <model>         Model to train/predict (baseline, ner)
     <filename>      The filename to evaluate
 
 Pipelines:
@@ -19,7 +19,7 @@ from docopt import docopt
 from dotenv import load_dotenv
 
 # pylint: disable=unused-import
-from src.models import baseline, cnn, ner
+from src.models import baseline, ner
 from src.pipelines.aquire_data import AquireData as aquire_data
 from src.pipelines.process_data import ProcessData as process_data
 
