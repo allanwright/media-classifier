@@ -11,8 +11,8 @@ Arguments:
     <filename>      The filename to evaluate
 
 Pipelines:
-    <aquiredata>    Aquires training and test data
-    <process>       Processes training and test data
+    <aquire-data>   Aquires training and test data
+    <process-data>  Processes training and test data
 '''
 
 from docopt import docopt
@@ -20,8 +20,8 @@ from dotenv import load_dotenv
 
 # pylint: disable=unused-import
 from src.models import baseline, cnn, ner
-from src.pipelines.aquire_data import AquireData as aquiredata
-from src.pipelines.process import Process as process
+from src.pipelines.aquire_data import AquireData as aquire_data
+from src.pipelines.process_data import ProcessData as process_data
 
 def main():
     '''The entry point of the package.
@@ -38,8 +38,8 @@ def main():
     elif args['predict']:
         __resolve_method(args['<model>'], 'predict')(args['<filename>'])
 
-def __resolve_class(name):
-    return globals()[name]
+def __resolve_class(name: str):
+    return globals()[name.replace('-', '_')]
 
 def __resolve_method(module, method):
     if isinstance(module, str):
