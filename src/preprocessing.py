@@ -1,28 +1,33 @@
-'''Aquisition of data for training.
+'''Methods used for processing training and test data.
 
 '''
 
-from src.pipelines.process import Process
-from src.steps.merge import Merge
-from src.steps.prepare_classification_data import PrepareClassificationData
-
-def process_all():
-    '''Performs all data processing steps.
+def get_app_ext():
+    '''Gets app file extensions.
 
     '''
-    pipeline = Process()
-    pipeline.run()
+    return ['exe', 'bin', 'zip', 'rar', 'iso', 'cab', 'dll', 'msi', 'dmg', 'dat']
 
-def process_merge():
-    '''Performs merging of data.
-
-    '''
-    merge = Merge()
-    merge.run()
-
-def process_feature():
-    '''Performs feature generation.
+def get_movie_ext():
+    '''Gets app file extensions.
 
     '''
-    prepare = PrepareClassificationData()
-    prepare.run()
+    return ['mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v']
+
+def get_music_ext():
+    '''Gets music file extensions.
+
+    '''
+    return ['mp3', 'm4a', 'ogg', 'flac', 'wav']
+
+def get_tv_ext():
+    '''Gets tv file extensions.
+
+    '''
+    return ['mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v']
+
+def get_resolutions():
+    '''Gets resolutions.
+
+    '''
+    return ['480p', '576p', '720p', '1080p', '2160p', '4k']

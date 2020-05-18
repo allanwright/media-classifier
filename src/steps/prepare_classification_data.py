@@ -11,7 +11,7 @@ from sklearn.utils import resample
 import pandas as pd
 
 from src.step import Step
-import src.misc as misc
+import src.preprocessing as src_preprocessing
 
 class PrepareClassificationData(Step):
     '''Defines a pipeline step which prepares training and test data for
@@ -63,7 +63,7 @@ class PrepareClassificationData(Step):
         # Augment training data with all resolutions
         self.print('Augmenting training data ({rows} rows)', rows=df.shape[0])
         df['res'] = ''
-        resolutions = misc.get_resolutions()
+        resolutions = src_preprocessing.get_resolutions()
         df_res = pd.DataFrame()
 
         for res in resolutions:
@@ -86,10 +86,10 @@ class PrepareClassificationData(Step):
         df.loc[df['category'] == 'game', 'category'] = 'app'
 
         # Remove junk filenames
-        music_ext = misc.get_music_ext()
-        movie_ext = misc.get_movie_ext()
-        tv_ext = misc.get_tv_ext()
-        app_ext = misc.get_app_ext()
+        music_ext = src_preprocessing.get_music_ext()
+        movie_ext = src_preprocessing.get_movie_ext()
+        tv_ext = src_preprocessing.get_tv_ext()
+        app_ext = src_preprocessing.get_app_ext()
 
         df = df[((df['category'] == 'music') & (df['ext'].isin(music_ext))) |
                 ((df['category'] == 'movie') & (df['ext'].isin(movie_ext))) |

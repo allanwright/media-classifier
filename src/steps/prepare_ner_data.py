@@ -10,7 +10,7 @@ from sklearn.utils import resample
 import pandas as pd
 
 from src.step import Step
-import src.misc as misc
+import src.preprocessing as preprocessing
 
 class PrepareNerData(Step):
     '''Defines a pipeline step which prepares training and test data for
@@ -98,13 +98,13 @@ class PrepareNerData(Step):
         df['entity'] = ''
 
         # Label file extension
-        movie_ext = misc.get_movie_ext()
-        tv_ext = misc.get_tv_ext()
+        movie_ext = preprocessing.get_movie_ext()
+        tv_ext = preprocessing.get_tv_ext()
         df.loc[(df['word'].isin(movie_ext)) & (df.category == 'movie'), 'entity'] = 'ext'
         df.loc[(df['word'].isin(tv_ext)) & (df.category == 'tv'), 'entity'] = 'ext'
 
         # Label resolution
-        resolutions = misc.get_resolutions()
+        resolutions = preprocessing.get_resolutions()
         df.loc[df['word'].isin(resolutions), 'entity'] = 'res'
 
         # Label encoding
