@@ -11,8 +11,8 @@ Arguments:
     <filename>      The filename to evaluate
 
 Pipelines:
-    <aquire-data>   Aquires training and test data
-    <process-data>  Processes training and test data
+    aquire-data     Aquires training and test data
+    process-data    Processes training and test data
 '''
 
 from docopt import docopt
@@ -22,6 +22,7 @@ from dotenv import load_dotenv
 from src.models import baseline, ner
 from src.pipelines.aquire_data import AquireData as aquire_data
 from src.pipelines.process_data import ProcessData as process_data
+from src.pipelines.train_classifier import TrainClassifier as train_classifier
 
 def main():
     '''The entry point of the package.
