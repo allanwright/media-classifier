@@ -6,13 +6,15 @@ Usage:
     mc predict <model> <filename>
 
 Arguments:
-    <pipeline>      The name of the pipeline to run
-    <model>         Model to train/predict (baseline, ner)
-    <filename>      The filename to evaluate
+    <pipeline>          The name of the pipeline to run
+    <model>             Model to train/predict (baseline, ner)
+    <filename>          The filename to evaluate
 
 Pipelines:
-    aquire-data     Aquires training and test data
-    process-data    Processes training and test data
+    aquire-data         Aquires training and test data
+    process-data        Processes training and test data
+    train-classifier    Trains the classification model
+    train-ner           Trains the ner model
 '''
 
 from docopt import docopt
@@ -23,6 +25,7 @@ from src.models import baseline, ner
 from src.pipelines.aquire_data import AquireData as aquire_data
 from src.pipelines.process_data import ProcessData as process_data
 from src.pipelines.train_classifier import TrainClassifier as train_classifier
+from src.pipelines.train_ner import TrainNer as train_ner
 
 def main():
     '''The entry point of the package.
