@@ -2,7 +2,6 @@
 
 Usage:
     mc run <pipeline>
-    mc train <model>
     mc predict <model> <filename>
 
 Arguments:
@@ -37,8 +36,6 @@ def main():
     if args['run']:
         pipeline = __resolve_class(args['<pipeline>'])()
         pipeline.run()
-    elif args['train']:
-        __resolve_method(args['<model>'], 'train')()
     elif args['predict']:
         __resolve_method(args['<model>'], 'predict')(args['<filename>'])
 
