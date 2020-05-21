@@ -6,7 +6,7 @@ Usage:
 
 Arguments:
     <pipeline>          The name of the pipeline to run
-    <model>             Model to train/predict (baseline, ner)
+    <model>             Model to use for predictions (classifier, ner)
     <filename>          The filename to evaluate
 
 Pipelines:
@@ -20,11 +20,11 @@ from docopt import docopt
 from dotenv import load_dotenv
 
 # pylint: disable=unused-import
-from src.models import baseline, ner
+from src import classifier, ner
 from src.pipelines.aquire_data import AquireData as aquire_data
 from src.pipelines.process_data import ProcessData as process_data
 from src.pipelines.train_classifier import TrainClassifier as train_classifier
-from src.pipelines.train_ner import TrainNer as train_ner
+from src.pipelines.train_ner import TrainNer as train_ners
 
 def main():
     '''The entry point of the package.
