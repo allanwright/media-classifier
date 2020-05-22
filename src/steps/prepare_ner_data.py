@@ -6,7 +6,6 @@ named entity recognition.
 import json
 import pickle
 
-from sklearn.utils import resample
 import pandas as pd
 
 from src.step import Step
@@ -21,12 +20,10 @@ class PrepareNerData(Step):
     def __init__(self):
         super(PrepareNerData, self).__init__()
         self.input = {
-            'combined': 'data/interim/combined.csv',
+            'processed': 'data/interim/processed.csv',
             'ner_labelled_csv': 'data/interim/ner_labelled.csv',
         }
         self.output = {
-            'pruned': 'data/interim/pruned.csv',
-            'pruned_balanced': 'data/interim/pruned_balanced.csv',
             'stacked': 'data/interim/stacked.csv',
             'ner_labelled_tsv': 'data/interim/ner_labelled.tsv',
             'ner_labelled_json': 'data/interim/ner_labelled.json',
@@ -37,18 +34,6 @@ class PrepareNerData(Step):
         '''Runs the pipeline step.
 
         '''
-        """ df = pd.read_csv(self.input['final'])
-
-        # Create named entity columns
-        df['title'] = ''
-        df['source'] = ''
-        df['season_id'] = ''
-        df['episode_id'] = ''
-        df['episode_name'] = ''
-        df['resolution'] = ''
-        df['encoding'] = ''
-        df['year'] = ''
-        df['extension'] = '' """
 
         # Process data for named entity recognition labelling
         self.__process_data_for_ner()
@@ -62,31 +47,8 @@ class PrepareNerData(Step):
             print(ent)
 
     def __process_data_for_ner(self):
-        df = pd.read_csv(self.input['combined'])
+        df = pd.read_csv(self.input['processed'])
         self.print('Processing data for named entity recognition ({rows} rows)', rows=df.shape[0])
-
-        # Remove all rows that aren't a movie or tv show
-        df = df[df['category'].isin(['movie', 'tv'])]
-
-        # Remove as many foreign language filenames as possible
-        df = df[~df.name.str.contains('tamil')]
-        df = df[~df.name.str.contains('hindi')]
-        df = df[~df.name.str.contains('www')]
-
-        df.to_csv(self.output['pruned'], index=False)
-
-        # Downsample to fix class imbalance
-        self.print('Balancing classes ({rows} rows)', rows=df.shape[0])
-        categories = [df[df.category == c] for c in df.category.unique()]
-        sample_size = min([len(c) for c in categories])
-        downsampled = [resample(c,
-                                replace=False,
-                                n_samples=sample_size,
-                                random_state=123) for c in categories]
-        df = pd.concat(downsampled)
-
-        # Save final output before splitting
-        df.to_csv(self.output['pruned_balanced'], index=False)
 
         # Split the filename into individual words then stack the DataFrame
         self.print('Stacking dataset ({rows} rows)', rows=df.shape[0])

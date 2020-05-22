@@ -26,10 +26,7 @@ class PrepareClassificationData(Step):
             'predictions': 'data/predictions/predictions.csv',
         }
         self.output = {
-            'augmented': 'data/interim/augmented.csv',
-            'cleaned': 'data/interim/cleaned.csv',
-            'balanced': 'data/interim/balanced.csv',
-            'final': 'data/interim/final.csv',
+            'processed': 'data/interim/processed.csv',
             'x_train': 'data/processed/x_train.csv',
             'y_train': 'data/processed/y_train.csv',
             'x_eval': 'data/processed/x_eval.csv',
@@ -80,8 +77,6 @@ class PrepareClassificationData(Step):
         pd.concat([df, df_res])
         df = df.drop('res', axis=1)
 
-        df.to_csv(self.output['augmented'])
-
         #Merge categories
         df.loc[df['category'] == 'game', 'category'] = 'app'
 
@@ -99,9 +94,6 @@ class PrepareClassificationData(Step):
         # Remove duplicates by filename and category
         df.drop_duplicates(subset=['name', 'category'], inplace=True)
 
-        # Save interim output before processing further
-        df.to_csv(self.output['cleaned'], index=False)
-
         # Downsample to fix class imbalance
         self.print('Balancing classes ({rows} rows)', rows=df.shape[0])
         categories = [df[df.category == c] for c in df.category.unique()]
@@ -111,9 +103,6 @@ class PrepareClassificationData(Step):
                                 n_samples=sample_size,
                                 random_state=123) for c in categories]
         df = pd.concat(downsampled)
-
-        # Save final output before splitting
-        df.to_csv(self.output['balanced'], index=False)
 
         # Encode labels
         label_encoder = LabelEncoder()
@@ -130,7 +119,7 @@ class PrepareClassificationData(Step):
             category_dict, 'data/processed/label_dictionary.json')
 
         # Save final output before splitting
-        df.to_csv(self.output['final'], index=False)
+        df.to_csv(self.output['processed'], index=False)
 
         # Perform train test data split
         self.print('Splitting data ({rows} rows)', rows=df.shape[0])
