@@ -14,6 +14,7 @@ Pipelines:
     process-data        Processes training and test data
     train-classifier    Trains the classification model
     train-ner           Trains the ner model
+    all-the-things      Does all the things
 '''
 
 from docopt import docopt
@@ -24,7 +25,8 @@ from src import classifier, ner
 from src.pipelines.aquire_data import AquireData as aquire_data
 from src.pipelines.process_data import ProcessData as process_data
 from src.pipelines.train_classifier import TrainClassifier as train_classifier
-from src.pipelines.train_ner import TrainNer as train_ners
+from src.pipelines.train_ner import TrainNer as train_ner
+from src.pipelines.all_the_things import AllTheThings as all_the_things
 
 def main():
     '''The entry point of the package.
