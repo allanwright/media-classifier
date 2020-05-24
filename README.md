@@ -9,14 +9,18 @@ Media-Classifier has a CLI for executing all required steps in training the text
 
 ```shell
 Usage:
-    mc aquire <source>
-    mc process <step>
-    mc train <model>
+    mc run <pipeline>
     mc predict <model> <filename>
-    
+
 Arguments:
-    <source>    Source to aquire data from (pig, kraken, xerus, yak, prediction)
-    <step>      Processing step to run (all, merge, feature)
-    <model>     Model to train/predict (baseline, cnn, ner)
-    <filename>  The filename to evaluate
+    <pipeline>          The name of the pipeline to run
+    <model>             Model to use for predictions (classifier, ner)
+    <filename>          The filename to evaluate
+
+Pipelines:
+    aquire-data         Aquires training and test data
+    process-data        Processes training and test data
+    train-classifier    Trains the classification model
+    train-ner           Trains the ner model
+    all-the-things      Does all the things
 ```
