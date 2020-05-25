@@ -17,4 +17,13 @@ def predict(filename):
     nlp_bytes = persistence.bin_to_obj('models/ner_mdl.pickle')
     nlp.from_bytes(nlp_bytes)
     recognizer = EntityRecognizer(nlp)
-    print(recognizer.predict(filename))
+    return recognizer.predict(filename)
+
+def predict_and_print(filename):
+    ''' Makes a prediction using the named entity recognition model and prints the result.
+
+    Args:
+        input (filename): The filename to evaluate.
+    '''
+    result = predict(filename)
+    print(result)

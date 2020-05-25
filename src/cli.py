@@ -39,7 +39,7 @@ def main():
         pipeline = __resolve_class(args['<pipeline>'])()
         pipeline.run()
     elif args['predict']:
-        __resolve_method(args['<model>'], 'predict')(args['<filename>'])
+        __resolve_method(args['<model>'], 'predict_and_print')(args['<filename>'])
 
 def __resolve_class(name: str):
     return globals()[name.replace('-', '_')]

@@ -19,5 +19,14 @@ def predict(filename):
     )
     label, confidence = classifier.predict(filename)
 
+    return (label, confidence)
+
+def predict_and_print(filename):
+    ''' Makes a prediction using the classification model and prints the result.
+
+    Args:
+        filenanme (string): The filename to evaluate.
+    '''
+    label, confidence = predict(filename)
     print('Predicted class \'{label}\' with {confidence:.2f}% confidence.'
           .format(label=label, confidence=confidence*100))

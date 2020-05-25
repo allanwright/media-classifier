@@ -6,6 +6,7 @@ import os
 
 from azure.storage.queue import QueueClient
 
+from src import classifier
 from src.step import Step
 
 class GetPredictionData(Step):
@@ -34,7 +35,12 @@ class GetPredictionData(Step):
         response = queue.receive_messages(messages_per_page=5)
         for batch in response.by_page():
             for message in batch:
-                print(message.content)
+                filename = message.content
+                label, _ = classifier.predict(filename)
+                self.print(
+                    '\'{filename}\' classified as \'{label}\'',
+                    filename=filename,
+                    label=label['name'])
                 with open(self.output['predictions'], 'a') as f:
-                    f.write(message.content + '\n')
+                    f.write(message.content + ',' + str(label['id']) + '\n')
                 queue.delete_message(message)
