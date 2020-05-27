@@ -4,6 +4,7 @@
 
 from src.pipeline import Pipeline
 from src.steps.train_classification_model import TrainClassificationModel
+from src.steps.validate_classification_model import ValidateClassificationModel
 
 class TrainClassifier(Pipeline):
     '''Defines a processing pipeline that trains the classification model.
@@ -16,3 +17,4 @@ class TrainClassifier(Pipeline):
         '''
         super(TrainClassifier, self).__init__()
         self.add_step(TrainClassificationModel())
+        self.add_step(ValidateClassificationModel())
