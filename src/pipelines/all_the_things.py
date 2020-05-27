@@ -7,7 +7,7 @@ from src.steps.get_prediction_data import GetPredictionData
 from src.steps.merge import Merge
 from src.steps.prepare_classification_data import PrepareClassificationData
 from src.steps.prepare_ner_data import PrepareNerData
-from src.steps.train_classification_model import TrainClassificationModel
+from src.steps.train_classifier import TrainClassifier
 from src.steps.train_ner_model import TrainNerModel
 
 class AllTheThings(Pipeline):
@@ -24,5 +24,5 @@ class AllTheThings(Pipeline):
         self.add_step(Merge())
         self.add_step(PrepareClassificationData())
         self.add_step(PrepareNerData())
-        self.add_step(TrainClassificationModel())
+        self.add_step(TrainClassifier())
         self.add_step(TrainNerModel())

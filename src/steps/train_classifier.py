@@ -13,13 +13,13 @@ import matplotlib.pyplot as plt
 from src import datasets
 from src.step import Step
 
-class TrainClassificationModel(Step):
+class TrainClassifier(Step):
     '''Defines a pipeline step which trains the classification model.
 
     '''
 
     def __init__(self):
-        super(TrainClassificationModel, self).__init__()
+        super(TrainClassifier, self).__init__()
         self.input = {
         }
         self.output = {

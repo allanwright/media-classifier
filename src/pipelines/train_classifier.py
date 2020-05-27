@@ -3,7 +3,7 @@
 '''
 
 from src.pipeline import Pipeline
-from src.steps.train_classification_model import TrainClassificationModel
+from src.steps.train_classifier import TrainClassifier as TrainClassifierStep
 from src.steps.validate_classification_model import ValidateClassificationModel
 
 class TrainClassifier(Pipeline):
@@ -16,5 +16,5 @@ class TrainClassifier(Pipeline):
 
         '''
         super(TrainClassifier, self).__init__()
-        self.add_step(TrainClassificationModel())
+        self.add_step(TrainClassifierStep())
         self.add_step(ValidateClassificationModel())
