@@ -9,13 +9,13 @@ from mccore import Classifier
 
 from src.step import Step
 
-class ValidateClassificationModel(Step):
+class ValidateClassifier(Step):
     '''Defines a pipeline step which validates the classification model.
 
     '''
 
     def __init__(self):
-        super(ValidateClassificationModel, self).__init__()
+        super(ValidateClassifier, self).__init__()
         self.input = {
             'predictions': 'data/predictions/predictions.csv',
         }
