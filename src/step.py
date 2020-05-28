@@ -24,6 +24,6 @@ class Step():
         '''
         step_name = self.__class__.__name__
         message = message.format(**kwargs)
-        print('Pipeline step \'{step_name}\': {message}'.format(
+        print('Step \'{step_name}\': {message}'.format(
             step_name=step_name,
             message=message))
