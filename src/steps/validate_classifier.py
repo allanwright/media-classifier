@@ -18,6 +18,9 @@ class ValidateClassifier(Step):
         super(ValidateClassifier, self).__init__()
         self.input = {
             'predictions': 'data/predictions/predictions.csv',
+            'label_dict': 'data/processed/label_dictionary.json',
+            'vectorizer': 'models/cls_base_vec.pickle',
+            'model': 'models/cls_base_mdl.pickle',
         }
         self.output = {
         }
@@ -26,10 +29,10 @@ class ValidateClassifier(Step):
         '''Runs the pipeline step.
 
         '''
-        labels = persistence.json_to_obj('data/processed/label_dictionary.json')
+        labels = persistence.json_to_obj(self.input['label_dict'])
         classifier = Classifier(
-            persistence.bin_to_obj('models/cls_base_vec.pickle'),
-            persistence.bin_to_obj('models/cls_base_mdl.pickle'),
+            persistence.bin_to_obj(self.input['vectorizer']),
+            persistence.bin_to_obj(self.input['model']),
             labels
         )
 
