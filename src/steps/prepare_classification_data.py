@@ -140,7 +140,7 @@ class PrepareClassificationData(Step):
         df = pd.read_csv(self.input['predictions'])
         df['name'] = df['name'].apply(preprocessing.prepare_input)
         x_test = df['name']
-        y_test = df['class']
+        y_test = df['expected']
         x_test.to_csv(self.output['x_test'], index=False, header=False)
         y_test.to_csv(self.output['y_test'], index=False, header=False)
 
