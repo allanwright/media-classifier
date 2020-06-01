@@ -1,5 +1,4 @@
-pandas==0.24.*
-tensorflow
+pandas
 docopt
 python-dotenv
 bs4
@@ -9,7 +8,7 @@ jupyter
 seaborn
 progressbar2
 rope
-numpy<1.17.0
+numpy
 spacy
 git+https://github.com/allanwright/media-classifier-core
 azure-storage-queue

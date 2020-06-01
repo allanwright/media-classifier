@@ -1,4 +1,4 @@
-#%%
+""" #%%
 from datetime import datetime
 import numpy as np
 import pandas as pd
@@ -190,4 +190,4 @@ def sepcnn_model(blocks,
     model.add(GlobalAveragePooling1D())
     model.add(Dropout(rate=dropout_rate))
     model.add(Dense(op_units, activation=op_activation))
-    return model
+    return model """
