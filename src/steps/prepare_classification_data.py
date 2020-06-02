@@ -82,13 +82,12 @@ class PrepareClassificationData(Step):
 
         # Remove junk filenames
         music_ext = src_preprocessing.get_music_ext()
-        movie_ext = src_preprocessing.get_movie_ext()
-        tv_ext = src_preprocessing.get_tv_ext()
+        movie_tv_ext = src_preprocessing.get_movie_tv_ext()
         app_ext = src_preprocessing.get_app_ext()
 
         df = df[((df['category'] == 'music') & (df['ext'].isin(music_ext))) |
-                ((df['category'] == 'movie') & (df['ext'].isin(movie_ext))) |
-                ((df['category'] == 'tv') & (df['ext'].isin(tv_ext))) |
+                ((df['category'] == 'movie') & (df['ext'].isin(movie_tv_ext))) |
+                ((df['category'] == 'tv') & (df['ext'].isin(movie_tv_ext))) |
                 ((df['category'] == 'app') & (df['ext'].isin(app_ext)))]
 
         # Remove duplicates by filename and category

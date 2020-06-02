@@ -8,8 +8,8 @@ def get_app_ext():
     '''
     return ['exe', 'bin', 'zip', 'rar', 'iso', 'cab', 'dll', 'msi', 'dmg', 'dat']
 
-def get_movie_ext():
-    '''Gets app file extensions.
+def get_movie_tv_ext():
+    '''Gets movie and tv file extensions.
 
     '''
     return ['mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v']
@@ -19,12 +19,6 @@ def get_music_ext():
 
     '''
     return ['mp3', 'm4a', 'ogg', 'flac', 'wav']
-
-def get_tv_ext():
-    '''Gets tv file extensions.
-
-    '''
-    return ['mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v']
 
 def get_resolutions():
     '''Gets resolutions.
