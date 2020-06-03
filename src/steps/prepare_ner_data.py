@@ -60,7 +60,12 @@ class PrepareNerData(Step):
         df['entity'] = ''
 
         # Label file extension
-        # TODO: Label file extensions for all categories
+        ext = preprocessing.get_app_ext()
+        df.loc[df['word'].isin(app_ext) & df['category'].isin([0]), 'entity'] = 'ext'
+
+        music_ext = preprocessing.get_music_ext()
+        df.loc[df['word'].isin(music_ext) & df['category'].isin([2]), 'entity'] = 'ext'
+
         movie_tv_ext = preprocessing.get_movie_tv_ext()
         categories = [1, 3]
         df.loc[df['word'].isin(movie_tv_ext) & df['category'].isin(categories), 'entity'] = 'ext'
