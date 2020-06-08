@@ -2,6 +2,7 @@
 
 '''
 
+import datetime
 import os
 import requests
 
@@ -26,7 +27,6 @@ class GetXerusData(Step):
             'end_page': 150,
         }
         self.output = {
-            'doco': ['%s/Documentaries/%s/', 'data/raw/doco/xerus%s.txt'],
             'music': ['%s/Music/%s/', 'data/raw/music/xerus%s.txt'],
             'tv': ['%s/TV/%s/', 'data/raw/tv/xerus%s.txt'],
             'movie': ['%s/Movies/%s/', 'data/raw/movie/xerus%s.txt'],
@@ -43,9 +43,11 @@ class GetXerusData(Step):
         end_page = self.input['end_page']
         for x in self.output.values():
             for y in range(start_page, end_page + 1):
+                now = datetime.datetime.today().strftime('%Y%m%dT%H%M%S')
+                name = x[1] % f'{now}_{y}'
                 datasets.write_list_to_file(
                     self.__get_xerus_files(
-                        url, x[0] % ('/cat', y)), x[1] % y)
+                        url, x[0] % ('/cat', y)), name)
 
     def __get_xerus_files(self, base_url, search_path):
         files = []

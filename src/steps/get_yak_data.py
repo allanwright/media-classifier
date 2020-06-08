@@ -2,6 +2,7 @@
 
 '''
 
+import datetime
 import http
 import os
 import requests
@@ -42,9 +43,11 @@ class GetYakData(Step):
 
         for x in self.output.values():
             for y in range(start_page, end_page + 1):
+                now = datetime.datetime.today().strftime('%Y%m%dT%H%M%S')
+                name = x[1] % f'{now}_{y}'
                 datasets.write_list_to_file(
                     self.__get_yak_files(
-                        url, x[0] % ('/browse-torrents', y)), x[1] % y)
+                        url, x[0] % ('/browse-torrents', y)), name)
 
     def __get_yak_files(self, base_url, search_path):
         files = []
