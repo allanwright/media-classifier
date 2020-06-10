@@ -12,7 +12,7 @@ def get_movie_tv_ext():
     '''Gets movie and tv file extensions.
 
     '''
-    return ['mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v']
+    return ['mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v', 'srt']
 
 def get_music_ext():
     '''Gets music file extensions.
