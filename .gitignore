@@ -77,7 +77,8 @@ target/
 
 # exclude data from source control by default
 /data/
-/results/
+/models/classifier/
+/models/ner/
 
 # Mac OS-specific storage files
 .DS_Store

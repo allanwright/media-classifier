@@ -3,6 +3,7 @@
 '''
 
 import datetime
+import os
 
 from mccore import persistence
 from sklearn.feature_extraction.text import CountVectorizer
@@ -23,9 +24,11 @@ class TrainClassifier(Step):
         self.input = {
         }
         self.output = {
-            'vectorizer': 'models/cls_base_vec.pickle',
-            'model': 'models/cls_base_mdl.pickle',
+            'output_dir': 'models/classifier/%s',
+            'vectorizer': 'models/classifier/%s/classifier_vec.pickle',
+            'model': 'models/classifier/%s/classifier_mdl.pickle',
             'label_dict': 'data/processed/label_dictionary.json',
+            'results': 'models/classifier/%s/%s.png',
         }
 
     def run(self):
@@ -38,6 +41,7 @@ class TrainClassifier(Step):
         x_train = vectorizer.transform(x_train)
         x_eval = vectorizer.transform(x_eval)
         x_test = vectorizer.transform(x_test)
+        timestamp = self.__get_timestamp()
 
         max_iterations = 200
         classifier = LogisticRegression(
@@ -47,15 +51,19 @@ class TrainClassifier(Step):
 
         classifier.fit(x_train, y_train)
 
-        self.__score_model(classifier, x_eval, y_eval, 'eval')
-        self.__score_model(classifier, x_test, y_test, 'test')
+        output_dir = self.output['output_dir'] % timestamp
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
 
-        persistence.obj_to_bin(vectorizer, self.output['vectorizer'])
-        persistence.obj_to_bin(classifier, self.output['model'])
+        self.__score_model(classifier, x_eval, y_eval, 'eval', timestamp)
+        self.__score_model(classifier, x_test, y_test, 'test', timestamp)
 
-        print('Training complete, check /results for model accuracy.')
+        persistence.obj_to_bin(vectorizer, self.output['vectorizer'] % timestamp)
+        persistence.obj_to_bin(classifier, self.output['model'] % timestamp)
 
-    def __score_model(self, classifier, features, labels, title):
+        print(f'Training complete, check {output_dir}/ for results.')
+
+    def __score_model(self, classifier, features, labels, title, timestamp):
         classes = persistence.json_to_obj(self.output['label_dict'])
         plot_confusion_matrix(
             estimator=classifier,
@@ -63,7 +71,8 @@ class TrainClassifier(Step):
             y_true=labels,
             display_labels=classes.values(),
             normalize='true')
-        now = datetime.datetime.today().strftime('%Y%m%dT%H%M%S')
-        name = f'{now}_{title}'
-        plt.title(name)
-        plt.savefig(f'results/{name}.png')
+        plt.title(title)
+        plt.savefig(self.output['results'] % (timestamp, title))
+
+    def __get_timestamp(self):
+        return datetime.datetime.today().strftime('%Y%m%dT%H%M%S')
