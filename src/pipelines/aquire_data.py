@@ -3,7 +3,7 @@
 '''
 
 from src.pipeline import Pipeline
-from src.steps.get_prediction_data import GetPredictionData
+from src.steps.get_test_data import GetTestData
 #from src.steps.get_kraken_data import GetKrakenData
 #from src.steps.get_pig_data import GetPigData
 #from src.steps.get_xerus_data import GetXerusData
@@ -23,4 +23,4 @@ class AquireData(Pipeline):
         #self.add_step(GetPigData())
         #self.add_step(GetXerusData())
         #self.add_step(GetYakData())
-        self.add_step(GetPredictionData())
+        self.add_step(GetTestData())

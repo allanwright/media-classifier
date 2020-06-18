@@ -3,7 +3,7 @@
 '''
 
 from src.pipeline import Pipeline
-from src.steps.get_prediction_data import GetPredictionData
+from src.steps.get_test_data import GetTestData
 from src.steps.merge import Merge
 from src.steps.prepare_classification_data import PrepareClassificationData
 from src.steps.prepare_ner_data import PrepareNerData
@@ -21,7 +21,7 @@ class AllTheThings(Pipeline):
 
         '''
         super(AllTheThings, self).__init__()
-        self.add_step(GetPredictionData())
+        self.add_step(GetTestData())
         self.add_step(Merge())
         self.add_step(PrepareClassificationData())
         self.add_step(PrepareNerData())

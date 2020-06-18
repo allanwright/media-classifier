@@ -1,4 +1,4 @@
-'''Defines a pipeline step which aquires prediction data.
+'''Defines a pipeline step which aquires test data.
 
 '''
 
@@ -9,19 +9,19 @@ from azure.storage.queue import QueueClient
 from src import classifier
 from src.step import Step
 
-class GetPredictionData(Step):
-    '''Defines a pipeline step which aquires prediction data.
+class GetTestData(Step):
+    '''Defines a pipeline step which aquires test data.
 
     '''
 
     def __init__(self):
-        '''Initializes a new instance of the GetPredictionData object.
+        '''Initializes a new instance of the GetTestData object.
 
         '''
-        super(GetPredictionData, self).__init__()
+        super(GetTestData, self).__init__()
         self.input = {}
         self.output = {
-            'predictions': 'data/predictions/predictions.csv',
+            'test': 'data/test/test.csv',
         }
 
     def run(self):
@@ -41,6 +41,6 @@ class GetPredictionData(Step):
                     '\'{filename}\' classified as \'{label}\'',
                     filename=filename,
                     label=label['name'])
-                with open(self.output['predictions'], 'a') as f:
+                with open(self.output['test'], 'a') as f:
                     f.write(message.content + ',' + str(label['id']) + '\n')
                 queue.delete_message(message)
