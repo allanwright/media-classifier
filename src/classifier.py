@@ -13,8 +13,8 @@ def predict(filename):
         filenanme (string): The filename to evaluate.
     '''
     classifier = Classifier(
-        persistence.bin_to_obj('models/cls_base_vec.pickle'),
-        persistence.bin_to_obj('models/cls_base_mdl.pickle'),
+        persistence.bin_to_obj('models/classifier_vec.pickle'),
+        persistence.bin_to_obj('models/classifier_mdl.pickle'),
         persistence.json_to_obj('data/processed/label_dictionary.json')
     )
     label, confidence = classifier.predict(filename)

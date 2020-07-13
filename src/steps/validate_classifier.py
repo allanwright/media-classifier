@@ -19,8 +19,8 @@ class ValidateClassifier(Step):
         self.input = {
             'predictions': 'data/predictions/predictions.csv',
             'label_dict': 'data/processed/label_dictionary.json',
-            'vectorizer': 'models/cls_base_vec.pickle',
-            'model': 'models/cls_base_mdl.pickle',
+            'vectorizer': 'models/classifier_vec.pickle',
+            'model': 'models/classifier_mdl.pickle',
         }
         self.output = {
         }

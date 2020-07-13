@@ -24,9 +24,10 @@ class TrainClassifier(Step):
         self.input = {
         }
         self.output = {
-            'output_dir': 'models/classifier/%s',
-            'vectorizer': 'models/classifier/%s/classifier_vec.pickle',
-            'model': 'models/classifier/%s/classifier_mdl.pickle',
+            'model_dir': 'models/',
+            'results_dir': 'models/classifier/%s/',
+            'vectorizer': 'classifier_vec.pickle',
+            'model': 'classifier_mdl.pickle',
             'label_dict': 'data/processed/label_dictionary.json',
             'results': 'models/classifier/%s/%s.png',
         }
@@ -51,17 +52,20 @@ class TrainClassifier(Step):
 
         classifier.fit(x_train, y_train)
 
-        output_dir = self.output['output_dir'] % timestamp
+        output_dir = self.output['results_dir'] % timestamp
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
 
         self.__score_model(classifier, x_eval, y_eval, 'eval', timestamp)
         self.__score_model(classifier, x_test, y_test, 'test', timestamp)
 
-        persistence.obj_to_bin(vectorizer, self.output['vectorizer'] % timestamp)
-        persistence.obj_to_bin(classifier, self.output['model'] % timestamp)
+        persistence.obj_to_bin(vectorizer, self.output['model_dir'] + self.output['vectorizer'])
+        persistence.obj_to_bin(classifier, self.output['model_dir'] + self.output['model'])
 
-        print(f'Training complete, check {output_dir}/ for results.')
+        persistence.obj_to_bin(vectorizer, output_dir + self.output['vectorizer'])
+        persistence.obj_to_bin(classifier, output_dir + self.output['model'])
+
+        print(f'Training complete, check {output_dir} for results.')
 
     def __score_model(self, classifier, features, labels, title, timestamp):
         classes = persistence.json_to_obj(self.output['label_dict'])
