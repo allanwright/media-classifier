@@ -21,7 +21,7 @@ class GetTestData(Step):
         super(GetTestData, self).__init__()
         self.input = {}
         self.output = {
-            'test': 'data/test/test.csv',
+            'test': 'data/test/classifier.csv',
         }
 
     def run(self):

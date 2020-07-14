@@ -17,7 +17,7 @@ class ValidateClassifier(Step):
     def __init__(self):
         super(ValidateClassifier, self).__init__()
         self.input = {
-            'predictions': 'data/predictions/predictions.csv',
+            'predictions': 'data/test/classifier.csv',
             'label_dict': 'data/processed/label_dictionary.json',
             'vectorizer': 'models/classifier_vec.pickle',
             'model': 'models/classifier_mdl.pickle',

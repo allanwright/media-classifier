@@ -23,7 +23,7 @@ class PrepareClassificationData(Step):
         super(PrepareClassificationData, self).__init__()
         self.input = {
             'combined': 'data/interim/combined.csv',
-            'predictions': 'data/predictions/predictions.csv',
+            'predictions': 'data/test/classifier.csv',
         }
         self.output = {
             'processed': 'data/interim/processed.csv',
