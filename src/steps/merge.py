@@ -20,7 +20,7 @@ class Merge(Step):
         '''
         super(Merge, self).__init__()
         self.input = {
-            'app': 'data/raw/app',
+            'app': 'data/raw/anything',
             'game': 'data/raw/games',
             'movie': 'data/raw/movie',
             'music': 'data/raw/music',

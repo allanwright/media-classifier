@@ -51,6 +51,9 @@ class PrepareClassificationData(Step):
         ext.columns = ['ext']
         df['ext'] = ext['ext']
 
+        # Remove anything without a file extension
+        df = df[df['ext'].str.len() > 0]
+
         # Remove paths from filenames
         df['name'] = df['name'].str.split('/').str[-1]
 
@@ -78,17 +81,15 @@ class PrepareClassificationData(Step):
         df = df.drop('res', axis=1)
 
         #Merge categories
-        df.loc[df['category'] == 'game', 'category'] = 'app'
+        df.loc[df['category'] == 'game', 'category'] = 'anything'
+        df.loc[df['category'] == 'music', 'category'] = 'anything'
 
         # Remove junk filenames
-        music_ext = src_preprocessing.get_music_ext()
         movie_tv_ext = src_preprocessing.get_movie_tv_ext()
-        app_ext = src_preprocessing.get_app_ext()
 
-        df = df[((df['category'] == 'music') & (df['ext'].isin(music_ext))) |
-                ((df['category'] == 'movie') & (df['ext'].isin(movie_tv_ext))) |
+        df = df[((df['category'] == 'movie') & (df['ext'].isin(movie_tv_ext))) |
                 ((df['category'] == 'tv') & (df['ext'].isin(movie_tv_ext))) |
-                ((df['category'] == 'app') & (df['ext'].isin(app_ext)))]
+                ((df['category'] == 'anything'))]
 
         # Remove duplicates by filename and category
         df.drop_duplicates(subset=['name', 'category'], inplace=True)
