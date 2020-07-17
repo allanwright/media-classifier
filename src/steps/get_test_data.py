@@ -7,6 +7,7 @@ import os
 from azure.storage.queue import QueueClient
 
 from src import classifier
+from src import ner
 from src.step import Step
 
 class GetTestData(Step):
@@ -21,7 +22,8 @@ class GetTestData(Step):
         super(GetTestData, self).__init__()
         self.input = {}
         self.output = {
-            'test': 'data/test/classifier.csv',
+            'classifier': 'data/test/classifier.csv',
+            'ner': 'data/test/ner.csv',
         }
 
     def run(self):
@@ -37,10 +39,17 @@ class GetTestData(Step):
             for message in batch:
                 filename = message.content
                 label, _ = classifier.predict(filename)
+                entities = ner.predict(filename)
                 self.print(
                     '\'{filename}\' classified as \'{label}\'',
                     filename=filename,
                     label=label['name'])
-                with open(self.output['test'], 'a') as f:
+                self.print(
+                    '\'{filename}\' has entities \'{entities}\'',
+                    filename=filename,
+                    entities=entities)
+                with open(self.output['classifier'], 'a') as f:
                     f.write(message.content + ',' + str(label['id']) + '\n')
+                with open(self.output['ner'], 'a') as f:
+                    f.write(message.content + ',' + str(entities) + '\n')
                 queue.delete_message(message)
