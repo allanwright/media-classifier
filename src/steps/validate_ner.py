@@ -20,7 +20,7 @@ class ValidateNer(Step):
     def __init__(self):
         super(ValidateNer, self).__init__()
         self.input = {
-            'predictions': 'data/test/ner1.csv',
+            'predictions': 'data/test/ner.csv',
             'model': 'models/ner_mdl.pickle',
         }
         self.output = {
