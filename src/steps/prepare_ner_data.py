@@ -3,13 +3,16 @@ named entity recognition.
 
 '''
 
+import ast
 import json
 import pickle
 
+from mccore import EntityRecognizer
+from mccore import ner
+from mccore import persistence
 import pandas as pd
 
 from src.step import Step
-import src.preprocessing as preprocessing
 
 class PrepareNerData(Step):
     '''Defines a pipeline step which prepares training and test data for
@@ -41,51 +44,61 @@ class PrepareNerData(Step):
         # Process labelled named entity recognition data (if any)
         self.__process_labelled_ner_data()
 
-    def __apply_entity_names(self, row, nlp):
-        doc = nlp(row['name'])
-        for ent in doc.ents:
-            print(ent)
-
     def __process_data_for_ner(self):
         df = pd.read_csv(self.input['processed'])
         self.print('Processing data for named entity recognition ({rows} rows)', rows=df.shape[0])
 
+        # Drop anything other than movies and tv shows
+        categories = [1, 3]
+        df = df[df['category'].isin(categories)]
+
+        # Drop anything that contains unwanted words
+        blacklist = [
+            'tamilrockers',
+            'www',
+        ]
+
+        def contains_blacklisted_word(name):
+            for word in name.split():
+                if word in blacklist:
+                    return True
+            return False
+
+        df['blacklisted'] = df['name'].apply(contains_blacklisted_word)
+        df.drop(df[df['blacklisted']].index, inplace=True)
+
+        df['entities'] = ''
+        nlp, _ = ner.get_model()
+        nlp_bytes = persistence.bin_to_obj('models/ner_mdl.pickle')
+        nlp.from_bytes(nlp_bytes)
+        recognizer = EntityRecognizer(nlp)
+        def get_entities(name):
+            return str(list(recognizer.predict(name)))
+
+        df['entities'] = df['name'].apply(get_entities)
+
+
         # Split the filename into individual words then stack the DataFrame
         self.print('Stacking dataset ({rows} rows)', rows=df.shape[0])
-        df = pd.DataFrame(df['name'].str.split().tolist(), index=[df.index, df.category]).stack()
+        index = [df.index, df.name, df.category, df.entities]
+        df = pd.DataFrame(df['name'].str.split().tolist(), index=index).stack()
         df = df.reset_index()
-        df.columns = ['index', 'category', 'pos', 'word']
+        df.columns = ['index', 'name', 'category', 'entities', 'pos', 'word']
 
         # Add entity column
         df['entity'] = ''
 
-        # Label file extension
-        movie_tv_ext = preprocessing.get_movie_tv_ext()
-        categories = [1, 3]
-        df.loc[df['word'].isin(movie_tv_ext) & df['category'].isin(categories), 'entity'] = 'ext'
+        def get_entity(row):
+            entities = ast.literal_eval(row['entities'])
+            word = row['word'].upper()
+            for i in entities:
+                if word in (str(s).upper() for s in str(i[1]).split()):
+                    return i[0]
+            return ''
 
-        # Label resolution
-        resolutions = preprocessing.get_resolutions()
-        df.loc[df['word'].isin(resolutions), 'entity'] = 'res'
+        df['entity'] = df.apply(get_entity, axis=1)
 
-        # Label encoding
-        encodings = ['h264', 'h265', 'x264', 'x265']
-        df.loc[df['word'].isin(encodings), 'entity'] = 'enc'
-
-        # Label season number
-        df.loc[df['word'].str.match(r'^s\d+$'), 'entity'] = 'sid'
-
-        # Label episode number
-        df.loc[df['word'].str.match(r'^e\d+$'), 'entity'] = 'eid'
-
-        # Label source
-        sources = ['bluray', 'brrip', 'web', 'webrip', 'hdtv', 'hdrip',
-                   'dvd', 'dvdrip']
-        df.loc[df['word'].isin(sources), 'entity'] = 'src'
-
-        # Label year
-        years = [str(x) for x in range(1940, 2020)]
-        df.loc[df['word'].isin(years), 'entity'] = 'year'
+        df.drop(columns=['entities'], inplace=True)
 
         # Save interim stacked output before processing further
         df.to_csv(self.output['stacked'], index=False)
