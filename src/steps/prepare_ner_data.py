@@ -30,7 +30,7 @@ class PrepareNerData(Step):
             'stacked': 'data/interim/stacked.csv',
             'ner_labelled_tsv': 'data/interim/ner_labelled.tsv',
             'ner_labelled_json': 'data/interim/ner_labelled.json',
-            'ner_labelled_pickle': 'data/interim/ner_labelled.pickle',
+            'ner_labelled_pickle': 'data/processed/ner_labelled.pickle',
         }
 
     def run(self):
