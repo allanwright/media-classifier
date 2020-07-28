@@ -11,6 +11,7 @@ from mccore import EntityRecognizer
 from mccore import ner
 from mccore import persistence
 import pandas as pd
+from sklearn.utils import resample
 
 from src.step import Step
 
@@ -49,13 +50,25 @@ class PrepareNerData(Step):
         self.print('Processing data for named entity recognition ({rows} rows)', rows=df.shape[0])
 
         # Drop anything other than movies and tv shows
-        categories = [1, 3]
+        categories = [1, 2]
         df = df[df['category'].isin(categories)]
+
+        # Drop subtitle files
+        df.drop(df[df['ext'] == 'srt'].index, inplace=True)
 
         # Drop anything that contains unwanted words
         blacklist = [
             'tamilrockers',
             'www',
+            'hindi',
+            'Ã',
+            'ita',
+            'french',
+            'spa',
+            'torrent9',
+            'torrentcounter',
+            'ssrmovies',
+            'rus',
         ]
 
         def contains_blacklisted_word(name):
@@ -67,6 +80,16 @@ class PrepareNerData(Step):
         df['blacklisted'] = df['name'].apply(contains_blacklisted_word)
         df.drop(df[df['blacklisted']].index, inplace=True)
 
+        # Downsample to a number of files that is reasonable enough for
+        # human verification of the labels provided by the ner model
+        self.print('Downsampling dataset ({rows} rows)', rows=df.shape[0])
+        categories = [df[df.category == c] for c in df.category.unique()]
+        downsampled = [resample(c,
+                                replace=False,
+                                n_samples=1000,
+                                random_state=123) for c in categories]
+        df = pd.concat(downsampled)
+
         df['entities'] = ''
         nlp, _ = ner.get_model()
         nlp_bytes = persistence.bin_to_obj('models/ner_mdl.pickle')
@@ -76,7 +99,6 @@ class PrepareNerData(Step):
             return str(list(recognizer.predict(name)))
 
         df['entities'] = df['name'].apply(get_entities)
-
 
         # Split the filename into individual words then stack the DataFrame
         self.print('Stacking dataset ({rows} rows)', rows=df.shape[0])
@@ -98,7 +120,7 @@ class PrepareNerData(Step):
 
         df['entity'] = df.apply(get_entity, axis=1)
 
-        df.drop(columns=['entities'], inplace=True)
+        df.drop(columns=['category', 'entities'], inplace=True)
 
         # Save interim stacked output before processing further
         df.to_csv(self.output['stacked'], index=False)
