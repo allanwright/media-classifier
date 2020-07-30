@@ -86,7 +86,7 @@ class PrepareNerData(Step):
         categories = [df[df.category == c] for c in df.category.unique()]
         downsampled = [resample(c,
                                 replace=False,
-                                n_samples=1000,
+                                n_samples=250,
                                 random_state=123) for c in categories]
         df = pd.concat(downsampled)
 
