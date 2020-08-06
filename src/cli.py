@@ -10,7 +10,8 @@ Arguments:
     <filename>              The filename to evaluate
 
 Pipelines:
-    aquire-data             Aquires training and test data
+    aquire-train-data       Aquires training data
+    aquire-test-data        Aquires test data
     process-data            Merges and processes training and test data for all models
     process-classifier      Process training and test data used by the classification model
     process-ner             Process training and test data used by the ner model
@@ -24,7 +25,8 @@ from dotenv import load_dotenv
 
 # pylint: disable=unused-import
 from src import classifier, ner
-from src.pipelines.aquire_data import AquireData as aquire_data
+from src.pipelines.aquire_train_data import AquireTrainData as aquire_train_data
+from src.pipelines.aquire_test_data import AquireTestData as aquire_test_data
 from src.pipelines.process_data import ProcessData as process_data
 from src.pipelines.process_classifier import ProcessClassifier as process_classifier
 from src.pipelines.process_ner import ProcessNer as process_ner
