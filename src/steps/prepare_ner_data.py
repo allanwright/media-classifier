@@ -69,6 +69,7 @@ class PrepareNerData(Step):
             'torrentcounter',
             'ssrmovies',
             'rus',
+            'bengali',
         ]
 
         def contains_blacklisted_word(name):
