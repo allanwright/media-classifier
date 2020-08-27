@@ -11,7 +11,6 @@ from sklearn.utils import resample
 import pandas as pd
 
 from src.step import Step
-import src.preprocessing as src_preprocessing
 
 class PrepareClassificationData(Step):
     '''Defines a pipeline step which prepares training and test data for
@@ -63,7 +62,7 @@ class PrepareClassificationData(Step):
         # Augment training data with all resolutions
         self.print('Augmenting training data ({rows} rows)', rows=df.shape[0])
         df['res'] = ''
-        resolutions = src_preprocessing.get_resolutions()
+        resolutions = ['480p', '576p', '720p', '1080p', '2160p', '4k']
         df_res = pd.DataFrame()
 
         for res in resolutions:
@@ -85,7 +84,7 @@ class PrepareClassificationData(Step):
         df.loc[df['category'] == 'music', 'category'] = 'anything'
 
         # Remove junk filenames
-        movie_tv_ext = src_preprocessing.get_movie_tv_ext()
+        movie_tv_ext = ['mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v', 'srt']
 
         df = df[((df['category'] == 'movie') & (df['ext'].isin(movie_tv_ext))) |
                 ((df['category'] == 'tv') & (df['ext'].isin(movie_tv_ext))) |
