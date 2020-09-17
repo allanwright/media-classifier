@@ -112,7 +112,7 @@ class PrepareClassificationData(Step):
         category_ids = df.category.unique()
         category_names = label_encoder.inverse_transform(category_ids)
         category_dict = {}
-        for i in range(len(category_ids)):
+        for i, _ in enumerate(category_ids):
             category_dict[int(category_ids[i])] = category_names[i]
         persistence.obj_to_json(
             category_dict, 'data/processed/label_dictionary.json')
