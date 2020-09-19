@@ -4,6 +4,7 @@
 
 import os
 
+from pandas.errors import EmptyDataError
 import pandas as pd
 import progressbar as pb
 
@@ -35,12 +36,22 @@ class Merge(Step):
 
         '''
         consolidated = pd.DataFrame()
+        empty_files = []
         for path in self.input.values():
             for root, _, files in os.walk(path):
                 self.print('Consolidating {path}', path=root)
                 for file in pb.progressbar(files):
-                    series = pd.read_csv(os.path.join(root, file), sep='\t', squeeze=True)
-                    df = pd.DataFrame(data={'name': series, 'category': root.split('/')[-1]})
-                    consolidated = consolidated.append(df, ignore_index=True)
+                    path = os.path.join(root, file)
+                    try:
+                        series = pd.read_csv(path, sep='\t', squeeze=True)
+                        df = pd.DataFrame(data={'name': series, 'category': root.split('/')[-1]})
+                        consolidated = consolidated.append(df, ignore_index=True)
+                    except EmptyDataError:
+                        empty_files.append(path)
+
+        if len(empty_files) > 0:
+            for _, empty_file in enumerate(empty_files):
+                self.print('\'{path}\' is empty', path=empty_file)
+
         self.print('Saving merged data ({rows} rows)', rows=consolidated.shape[0])
         consolidated.to_csv(self.output['path'], index=False)
