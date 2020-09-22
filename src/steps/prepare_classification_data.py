@@ -93,6 +93,13 @@ class PrepareClassificationData(Step):
         # Remove duplicates by filename and category
         df.drop_duplicates(subset=['name', 'category'], inplace=True)
 
+        total = df.shape[0]
+        categories = df['category'].value_counts()
+        message = 'Category \'{name}\' represents {value:.2%} of training data'
+        self.print(message, name='movie', value=(categories.movie / total))
+        self.print(message, name='tv', value=(categories.tv / total))
+        self.print(message, name='other', value=(categories.anything / total))
+
         # Downsample to fix class imbalance
         self.print('Balancing classes ({rows} rows)', rows=df.shape[0])
         categories = [df[df.category == c] for c in df.category.unique()]
