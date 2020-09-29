@@ -4,8 +4,6 @@
 
 import random
 
-from spacy.tokenizer import Tokenizer
-from spacy.tokens import Doc
 from spacy.util import minibatch, compounding
 
 from mccore import ner
@@ -34,7 +32,6 @@ class TrainNerModel(Step):
         iterations = 10
         train_data = persistence.bin_to_obj(self.input['train_data'])
         nlp, ner_pipe = ner.get_model()
-        nlp.tokenizer = WhitespaceTokenizer(nlp.vocab)
 
         # Add labels
         for _, annotations in train_data:
@@ -56,16 +53,3 @@ class TrainNerModel(Step):
                 #self.print(losses['ner'])
 
         persistence.obj_to_bin(nlp.to_bytes(), self.output['model'])
-
-class WhitespaceTokenizer(Tokenizer):
-    '''Defines a tokenizer that only splits on spaces.
-
-    '''
-
-    def __init__(self, vocab):
-        super(WhitespaceTokenizer, self).__init__(vocab)
-
-    def __call__(self, text):
-        words = text.rstrip().split(' ')
-        spaces = [True] * len(words)
-        return Doc(self.vocab, words=words, spaces=spaces)
