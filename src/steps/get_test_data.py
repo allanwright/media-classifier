@@ -51,5 +51,5 @@ class GetTestData(Step):
                 with open(self.output['classifier'], 'a') as f:
                     f.write(message.content + ',' + str(label['id']) + '\n')
                 with open(self.output['ner'], 'a') as f:
-                    f.write(message.content + ',' + str(entities) + '\n')
+                    f.write(message.content + ',\"' + str(entities) + '\"\n')
                 queue.delete_message(message)
