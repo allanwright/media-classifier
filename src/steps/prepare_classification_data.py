@@ -83,8 +83,11 @@ class PrepareClassificationData(Step):
         df.loc[df['category'] == 'game', 'category'] = 'anything'
         df.loc[df['category'] == 'music', 'category'] = 'anything'
 
+        #Reassign subtitle files to anything category
+        df.loc[df['ext'] == 'srt', 'category'] = 'anything'
+
         # Remove junk filenames
-        movie_tv_ext = ['mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v', 'srt']
+        movie_tv_ext = ['mp4', 'mkv', 'avi', 'wmv', 'mpg', 'm4v']
 
         df = df[((df['category'] == 'movie') & (df['ext'].isin(movie_tv_ext))) |
                 ((df['category'] == 'tv') & (df['ext'].isin(movie_tv_ext))) |
