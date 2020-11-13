@@ -18,6 +18,7 @@ Pipelines:
     train-classifier        Trains the classification model
     train-ner               Trains the ner model
     all-the-things          Does all the things
+    promote-classifier      Promotes a classification model to production
 '''
 
 from docopt import docopt
@@ -33,6 +34,7 @@ from src.pipelines.process_ner import ProcessNer as process_ner
 from src.pipelines.train_classifier import TrainClassifier as train_classifier
 from src.pipelines.train_ner import TrainNer as train_ner
 from src.pipelines.all_the_things import AllTheThings as all_the_things
+from src.pipelines.promote_classifier import PromoteClassifier as promote_classifier
 
 def main():
     '''The entry point of the package.
