@@ -34,7 +34,7 @@ from src.pipelines.process_ner import ProcessNer as process_ner
 from src.pipelines.train_classifier import TrainClassifier as train_classifier
 from src.pipelines.train_ner import TrainNer as train_ner
 from src.pipelines.all_the_things import AllTheThings as all_the_things
-from src.pipelines.promote_classifier import PromoteClassifier as promote_classifier
+from src.pipelines.promote_model import PromoteModel as promote_model
 
 def main():
     '''The entry point of the package.
