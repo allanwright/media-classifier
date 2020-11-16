@@ -12,11 +12,13 @@ class ProcessData(Pipeline):
 
     '''
 
-    def __init__(self):
+    def __init__(self, args):
         '''Initializes a new instance of the ProcessData object.
 
+        Args:
+            args (dict): Dictionary of arguments that can be passed as input to every step.
         '''
-        super(ProcessData, self).__init__()
+        super(ProcessData, self).__init__(args)
         self.add_step(Merge())
         self.add_step(PrepareClassificationData())
         self.add_step(PrepareNerData())

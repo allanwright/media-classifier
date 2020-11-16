@@ -11,7 +11,12 @@ class TrainNer(Pipeline):
 
     '''
 
-    def __init__(self):
-        super(TrainNer, self).__init__()
+    def __init__(self, args):
+        '''Initializes a new instance of the TrainNer object.
+
+        Args:
+            args (dict): Dictionary of arguments that can be passed as input to every step.
+        '''
+        super(TrainNer, self).__init__(args)
         self.add_step(TrainNerModel())
         self.add_step(ValidateNer())

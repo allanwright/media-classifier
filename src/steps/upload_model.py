@@ -23,4 +23,5 @@ class UploadModel(Step):
         '''Runs the pipeline step.
 
         '''
-        print('Do the work.')
+        for key in self.input:
+            print(key + '=' + self.input[key])

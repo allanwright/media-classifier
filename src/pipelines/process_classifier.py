@@ -10,9 +10,11 @@ class ProcessClassifier(Pipeline):
 
     '''
 
-    def __init__(self):
+    def __init__(self, args):
         '''Initializes a new instance of the ProcessClassifier object.
 
+        Args:
+            args (dict): Dictionary of arguments that can be passed as input to every step.
         '''
-        super(ProcessClassifier, self).__init__()
+        super(ProcessClassifier, self).__init__(args)
         self.add_step(PrepareClassificationData())

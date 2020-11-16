@@ -10,9 +10,11 @@ class ProcessNer(Pipeline):
 
     '''
 
-    def __init__(self):
+    def __init__(self, args):
         '''Initializes a new instance of the ProcessNer object.
 
+        Args:
+            args (dict): Dictionary of arguments that can be passed as input to every step.
         '''
-        super(ProcessNer, self).__init__()
+        super(ProcessNer, self).__init__(args)
         self.add_step(PrepareNerData())

@@ -11,10 +11,12 @@ class TrainClassifier(Pipeline):
 
     '''
 
-    def __init__(self):
+    def __init__(self, args):
         '''Initializes a new instance of the TrainClassifier object.
 
+        Args:
+            args (dict): Dictionary of arguments that can be passed as input to every step.
         '''
-        super(TrainClassifier, self).__init__()
+        super(TrainClassifier, self).__init__(args)
         self.add_step(TrainClassifierStep())
         self.add_step(ValidateClassifier())

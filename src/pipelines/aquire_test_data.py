@@ -10,9 +10,11 @@ class AquireTestData(Pipeline):
 
     '''
 
-    def __init__(self):
+    def __init__(self, args):
         '''Initializes a new instance of the AquireTestData object.
 
+        Args:
+            args (dict): Dictionary of arguments that can be passed as input to every step.
         '''
-        super(AquireTestData, self).__init__()
+        super(AquireTestData, self).__init__(args)
         self.add_step(GetTestData())

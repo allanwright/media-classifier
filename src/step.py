@@ -1,17 +1,24 @@
-''' Defines the interface for a data pipeline step.
+'''Defines the interface for a data pipeline step.
 
 '''
 
 from abc import abstractmethod
 
 class Step():
-    ''' Defines the interface for a data pipeline step.
+    '''Defines the interface for a data pipeline step.
 
     '''
 
+    def __init__(self):
+        '''Initializes a new instance of the Step object.
+
+        '''
+        self.input = {}
+        self.output = {}
+
     @abstractmethod
     def run(self):
-        ''' Runs the pipeline step.
+        '''Runs the pipeline step.
 
         '''
 

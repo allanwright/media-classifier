@@ -13,11 +13,13 @@ class AquireTrainData(Pipeline):
 
     '''
 
-    def __init__(self):
+    def __init__(self, args):
         '''Initializes a new instance of the AquireTrainData object.
 
+        Args:
+            args (dict): Dictionary of arguments that can be passed as input to every step.
         '''
-        super(AquireTrainData, self).__init__()
+        super(AquireTrainData, self).__init__(args)
         #self.add_step(GetKrakenData())
         #self.add_step(GetPigData())
         self.add_step(GetXerusData())
