@@ -17,7 +17,6 @@ Pipelines:
     process-ner             Process training and test data used by the ner model
     train-classifier        Trains the classification model
     train-ner               Trains the ner model
-    all-the-things          Does all the things
     promote-classifier      Promotes a classification model to production
 '''
 
@@ -33,7 +32,6 @@ from src.pipelines.process_classifier import ProcessClassifier as process_classi
 from src.pipelines.process_ner import ProcessNer as process_ner
 from src.pipelines.train_classifier import TrainClassifier as train_classifier
 from src.pipelines.train_ner import TrainNer as train_ner
-from src.pipelines.all_the_things import AllTheThings as all_the_things
 from src.pipelines.promote_model import PromoteModel as promote_model
 
 def main():
