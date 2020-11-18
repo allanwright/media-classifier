@@ -17,7 +17,7 @@ Pipelines:
     process-ner             Process training and test data used by the ner model
     train-classifier        Trains the classification model
     train-ner               Trains the ner model
-    promote-classifier      Promotes a classification model to production
+    promote-model           Promotes a model to production
 '''
 
 from docopt import docopt
