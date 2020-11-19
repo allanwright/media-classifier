@@ -1,13 +1,19 @@
 '''Media-Classifier CLI
 
 Usage:
-    mc run <pipeline>
+    mc aquire-train-data
+    mc aquire-test-data
+    mc process-data
+    mc process-classifier
+    mc process-ner
+    mc train-classifier
+    mc train-ner
+    mc promote-model --model <model>
     mc predict <model> <filename>
 
 Arguments:
-    <pipeline>              The name of the pipeline to run
-    <model>                 Model to use for predictions (classifier, ner)
-    <filename>              The filename to evaluate
+    -m <model>, --model <model>     Type of model (classifier, ner)
+    <filename>                      The filename to evaluate
 
 Pipelines:
     aquire-train-data       Aquires training data
@@ -41,11 +47,16 @@ def main():
     load_dotenv()
     args = docopt(__doc__)
 
-    if args['run']:
-        pipeline = __resolve_class(args['<pipeline>'])()
-        pipeline.run()
-    elif args['predict']:
+    pipeline_name = __get_first_true_command(args)
+
+    if args['predict']:
         __resolve_method(args['<model>'], 'predict_and_print')(args['<filename>'])
+    else:
+        pipeline = __resolve_class(pipeline_name)()
+        pipeline.run()
+
+def __get_first_true_command(args):
+    return [k for k, v in args.items() if v][0]
 
 def __resolve_class(name: str):
     return globals()[name.replace('-', '_')]
