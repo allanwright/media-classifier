@@ -55,12 +55,16 @@ def main():
 def __get_first_true_command(args):
     return [k for k, v in args.items() if v][0]
 
+def __get_pipeline_args(args):
+    return {k:v for k, v in args.items() if k.startswith('--')}
+
 def __resolve_pipeline(name):
     return globals()[name.replace('-', '_')]
 
 def __run_pipeline(args):
     pipeline_name = __get_first_true_command(args)
-    pipeline = __resolve_pipeline(pipeline_name)()
+    pipeline_args = __get_pipeline_args(args)
+    pipeline = __resolve_pipeline(pipeline_name)(pipeline_args)
     pipeline.run()
 
 def __resolve_method(module, method):
