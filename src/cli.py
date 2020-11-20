@@ -47,19 +47,21 @@ def main():
     load_dotenv()
     args = docopt(__doc__)
 
-    pipeline_name = __get_first_true_command(args)
-
     if args['predict']:
         __resolve_method(args['<model>'], 'predict_and_print')(args['<filename>'])
     else:
-        pipeline = __resolve_class(pipeline_name)()
-        pipeline.run()
+        __run_pipeline(args)
 
 def __get_first_true_command(args):
     return [k for k, v in args.items() if v][0]
 
-def __resolve_class(name: str):
+def __resolve_pipeline(name):
     return globals()[name.replace('-', '_')]
+
+def __run_pipeline(args):
+    pipeline_name = __get_first_true_command(args)
+    pipeline = __resolve_pipeline(pipeline_name)()
+    pipeline.run()
 
 def __resolve_method(module, method):
     if isinstance(module, str):
