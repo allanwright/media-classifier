@@ -2,10 +2,7 @@
 
 '''
 
-from mccore import EntityRecognizer
-from mccore import ner
-from mccore import persistence
-
+from src import ner
 from src.step import Step
 
 class PredictNer(Step):
@@ -16,7 +13,6 @@ class PredictNer(Step):
     def __init__(self):
         super(PredictNer, self).__init__()
         self.input = {
-            'model': 'models/ner_mdl.pickle'
         }
         self.output = {
         }
@@ -25,8 +21,4 @@ class PredictNer(Step):
         '''Runs the pipeline step.
 
         '''
-        nlp, _ = ner.get_model()
-        nlp_bytes = persistence.bin_to_obj(self.input['model'])
-        nlp.from_bytes(nlp_bytes)
-        recognizer = EntityRecognizer(nlp)
-        print(recognizer.predict(self.input['--filename']))
+        return ner.predict_and_print(self.input['--filename'])
