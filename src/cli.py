@@ -24,6 +24,7 @@ Pipelines:
     train-classifier        Trains the classification model
     train-ner               Trains the ner model
     promote-model           Promotes a model to production
+    predict-model           Uses a model to make a prediction
 '''
 
 from docopt import docopt
