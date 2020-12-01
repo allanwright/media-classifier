@@ -9,11 +9,11 @@ Usage:
     mc train-classifier
     mc train-ner
     mc promote-model --model <model>
-    mc predict <model> <filename>
+    mc predict-model --model <model> --filename <filename>
 
 Arguments:
-    -m <model>, --model <model>     Type of model (classifier, ner)
-    <filename>                      The filename to evaluate
+    -m <model>, --model <model>             Type of model (classifier, ner)
+    -f <filename>, --filename <filename>    The filename to evaluate
 
 Pipelines:
     aquire-train-data       Aquires training data
@@ -30,7 +30,6 @@ from docopt import docopt
 from dotenv import load_dotenv
 
 # pylint: disable=unused-import
-from src import classifier, ner
 from src.pipelines.aquire_train_data import AquireTrainData as aquire_train_data
 from src.pipelines.aquire_test_data import AquireTestData as aquire_test_data
 from src.pipelines.process_data import ProcessData as process_data
@@ -39,6 +38,7 @@ from src.pipelines.process_ner import ProcessNer as process_ner
 from src.pipelines.train_classifier import TrainClassifier as train_classifier
 from src.pipelines.train_ner import TrainNer as train_ner
 from src.pipelines.promote_model import PromoteModel as promote_model
+from src.pipelines.predict_model import PredictModel as predict_model
 
 def main():
     '''The entry point of the package.
@@ -46,32 +46,10 @@ def main():
     '''
     load_dotenv()
     args = docopt(__doc__)
-
-    if args['predict']:
-        __resolve_method(args['<model>'], 'predict_and_print')(args['<filename>'])
-    else:
-        __run_pipeline(args)
-
-def __get_first_true_command(args):
-    return [k for k, v in args.items() if v][0]
-
-def __get_pipeline_args(args):
-    return {k:v for k, v in args.items() if k.startswith('--')}
-
-def __resolve_pipeline(name):
-    return globals()[name.replace('-', '_')]
-
-def __run_pipeline(args):
-    pipeline_name = __get_first_true_command(args)
-    pipeline_args = __get_pipeline_args(args)
-    pipeline = __resolve_pipeline(pipeline_name)(pipeline_args)
+    pipeline_name = [k for k, v in args.items() if v is True][0]
+    pipeline_args = {k:v for k, v in args.items() if k.startswith('--')}
+    pipeline = globals()[pipeline_name.replace('-', '_')](pipeline_args)
     pipeline.run()
-
-def __resolve_method(module, method):
-    if isinstance(module, str):
-        return getattr(globals()[module], method)
-
-    return getattr(module, method)
 
 if __name__ == '__main__':
     main()
