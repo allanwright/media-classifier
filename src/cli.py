@@ -9,7 +9,7 @@ Usage:
     mc train-classifier
     mc train-ner
     mc promote-model --model <model>
-    mc predict-model --model <model> --filename <filename>
+    mc predict --model <model> --filename <filename>
 
 Arguments:
     -m <model>, --model <model>             Type of model (classifier, ner)
@@ -24,7 +24,7 @@ Pipelines:
     train-classifier        Trains the classification model
     train-ner               Trains the ner model
     promote-model           Promotes a model to production
-    predict-model           Uses a model to make a prediction
+    predict                 Uses a model to make a prediction
 '''
 
 from docopt import docopt
@@ -39,7 +39,7 @@ from src.pipelines.process_ner import ProcessNer as process_ner
 from src.pipelines.train_classifier import TrainClassifier as train_classifier
 from src.pipelines.train_ner import TrainNer as train_ner
 from src.pipelines.promote_model import PromoteModel as promote_model
-from src.pipelines.predict_model import PredictModel as predict_model
+from src.pipelines.predict import Predict as predict
 
 def main():
     '''The entry point of the package.

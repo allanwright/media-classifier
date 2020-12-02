@@ -6,7 +6,7 @@ from src.pipeline import Pipeline
 from src.steps.predict_classifier import PredictClassifier
 from src.steps.predict_ner import PredictNer
 
-class PredictModel(Pipeline):
+class Predict(Pipeline):
     '''Defines a processing pipeline that uses a model to make a prediction.
 
     '''
@@ -17,7 +17,7 @@ class PredictModel(Pipeline):
         Args:
             args (dict): Dictionary of arguments that can be passed as input to every step.
         '''
-        super(PredictModel, self).__init__(args)
+        super(Predict, self).__init__(args)
         if args['--model'] == 'ner':
             self.add_step(PredictNer())
         elif args['--model'] == 'classifier':
