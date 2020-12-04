@@ -10,15 +10,20 @@ Development is performed inside a docker container, using the Visual Studio Code
 Media-Classifier has a CLI for executing everything required to train and validate the machine learning models.
 
 ```shell
-
 Usage:
-    mc run <pipeline>
-    mc predict <model> <filename>
+    mc aquire-train-data
+    mc aquire-test-data
+    mc process-data
+    mc process-classifier
+    mc process-ner
+    mc train-classifier
+    mc train-ner
+    mc promote --model <model>
+    mc predict --model <model> --filename <filename>
 
 Arguments:
-    <pipeline>              The name of the pipeline to run
-    <model>                 Model to use for predictions (classifier, ner)
-    <filename>              The filename to evaluate
+    -m <model>, --model <model>             Type of model (classifier, ner)
+    -f <filename>, --filename <filename>    The filename to evaluate
 
 Pipelines:
     aquire-train-data       Aquires training data
@@ -28,7 +33,8 @@ Pipelines:
     process-ner             Process training and test data used by the ner model
     train-classifier        Trains the classification model
     train-ner               Trains the ner model
-    all-the-things          Does all the things
+    promote                 Promotes a model to production
+    predict                 Uses a model to make a prediction
 ```
 
 ## Classifier
