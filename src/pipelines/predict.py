@@ -12,7 +12,7 @@ class Predict(Pipeline):
     '''
 
     def __init__(self, args):
-        '''Initializes a new instance of the PredictModel object.
+        '''Initializes a new instance of the Predict object.
 
         Args:
             args (dict): Dictionary of arguments that can be passed as input to every step.
