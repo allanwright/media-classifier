@@ -8,7 +8,7 @@ Usage:
     mc process-ner
     mc train-classifier
     mc train-ner
-    mc promote-model --model <model>
+    mc promote --model <model>
     mc predict --model <model> --filename <filename>
 
 Arguments:
@@ -23,7 +23,7 @@ Pipelines:
     process-ner             Process training and test data used by the ner model
     train-classifier        Trains the classification model
     train-ner               Trains the ner model
-    promote-model           Promotes a model to production
+    promote                 Promotes a model to production
     predict                 Uses a model to make a prediction
 '''
 
@@ -38,7 +38,7 @@ from src.pipelines.process_classifier import ProcessClassifier as process_classi
 from src.pipelines.process_ner import ProcessNer as process_ner
 from src.pipelines.train_classifier import TrainClassifier as train_classifier
 from src.pipelines.train_ner import TrainNer as train_ner
-from src.pipelines.promote_model import PromoteModel as promote_model
+from src.pipelines.promote import Promote as promote
 from src.pipelines.predict import Predict as predict
 
 def main():
@@ -48,7 +48,7 @@ def main():
     load_dotenv()
     args = docopt(__doc__)
     pipeline_name = [k for k, v in args.items() if v is True][0]
-    pipeline_args = {k:v for k, v in args.items() if k.startswith('--')}
+    pipeline_args = {k:v for k, v in args.items() if k.startswith('--') and v is not None}
     pipeline = globals()[pipeline_name.replace('-', '_')](pipeline_args)
     pipeline.run()
 
