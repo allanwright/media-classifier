@@ -14,16 +14,6 @@ class UploadModel(Step):
 
     '''
 
-    def __init__(self):
-        '''Initializes a new instance of the UploadModel object.
-
-        '''
-        super(UploadModel, self).__init__()
-        self.input = {
-        }
-        self.output = {
-        }
-
     def run(self):
         '''Runs the pipeline step.
 

@@ -10,13 +10,6 @@ class PredictNer(Step):
 
     '''
 
-    def __init__(self):
-        super(PredictNer, self).__init__()
-        self.input = {
-        }
-        self.output = {
-        }
-
     def run(self):
         '''Runs the pipeline step.
 

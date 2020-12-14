@@ -10,13 +10,6 @@ class PredictClassifier(Step):
 
     '''
 
-    def __init__(self):
-        super(PredictClassifier, self).__init__()
-        self.input = {
-        }
-        self.output = {
-        }
-
     def run(self):
         '''Runs the pipeline step.
 

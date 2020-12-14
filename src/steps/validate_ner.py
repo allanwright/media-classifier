@@ -23,8 +23,6 @@ class ValidateNer(Step):
             'predictions': 'data/test/ner.csv',
             'model': 'models/ner_mdl.pickle',
         }
-        self.output = {
-        }
 
     def run(self):
         '''Runs the pipeline step.

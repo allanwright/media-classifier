@@ -20,7 +20,6 @@ class GetTestData(Step):
 
         '''
         super(GetTestData, self).__init__()
-        self.input = {}
         self.output = {
             'classifier': 'data/test/classifier.csv',
             'ner': 'data/test/ner.csv',

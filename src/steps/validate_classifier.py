@@ -22,8 +22,6 @@ class ValidateClassifier(Step):
             'vectorizer': 'models/classifier_vec.pickle',
             'model': 'models/classifier_mdl.pickle',
         }
-        self.output = {
-        }
 
     def run(self):
         '''Runs the pipeline step.
