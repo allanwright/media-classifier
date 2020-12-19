@@ -14,4 +14,4 @@ class PredictClassifier(Step):
         '''Runs the pipeline step.
 
         '''
-        return classifier.predict(self.input['--filename'])
+        return classifier.predict_and_print(self.input['--filename'])
