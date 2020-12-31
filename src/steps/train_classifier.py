@@ -4,6 +4,7 @@
 
 import datetime
 import os
+import shutil
 
 from mccore import persistence
 from sklearn.feature_extraction.text import CountVectorizer
@@ -64,6 +65,7 @@ class TrainClassifier(Step):
 
         persistence.obj_to_bin(vectorizer, output_dir + self.output['vectorizer'])
         persistence.obj_to_bin(classifier, output_dir + self.output['model'])
+        shutil.copy(self.output['label_dict'], output_dir)
 
         print(f'Training complete, check {output_dir} for results.')
 
