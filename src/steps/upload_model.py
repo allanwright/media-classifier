@@ -26,14 +26,16 @@ class UploadModel(Step):
             self.print('Path \'{path}\' could not be found.', path=path)
             return
 
-        files = [f for f in os.listdir(path) if f.endswith('.pickle')]
+        files = [f for f in os.listdir(path) if f.endswith('.json') or f.endswith('.pickle')]
 
         if not files:
             self.print('Path \'{path}\' is empty.', path=path)
             return
 
-        blob_service_client = BlobServiceClient.from_connection_string(os.getenv('AZ_BS_CNN'))
-        container_client = blob_service_client.get_container_client(model_type)
+        connection_string = os.getenv(f'AZ_ST_{model_type.upper()}_CNN')
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+        container_name = 'models'
+        container_client = blob_service_client.get_container_client(container_name)
 
         try:
             container_client.get_container_properties()
@@ -41,10 +43,10 @@ class UploadModel(Step):
             container_client.create_container()
 
         for file in files:
-            blob_client = blob_service_client.get_blob_client(model_type, file)
+            blob_client = blob_service_client.get_blob_client(container_name, file)
             with open(path + '/' + file, 'rb') as data:
                 blob_client.upload_blob(data, overwrite=True)
                 self.print(
-                    'Uploaded blob \'{file}\' to container \'{container}\'.',
+                    'Uploaded blob \'{file}\' to container \'{container_name}\'.',
                     file=file,
-                    container=model_type)
+                    container_name=container_name)
