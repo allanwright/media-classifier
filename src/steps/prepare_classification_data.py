@@ -124,7 +124,7 @@ class PrepareClassificationData(Step):
         category_dict = {}
         for i, _ in enumerate(category_ids):
             category_dict[int(category_ids[i])] = category_names[i]
-        category_dict['0'] = 'other'
+        category_dict.update({0 : 'other'})
         persistence.obj_to_json(
             category_dict, 'data/processed/label_dictionary.json')
 
