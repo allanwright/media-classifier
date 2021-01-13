@@ -38,8 +38,8 @@ class ValidateClassifier(Step):
             return labels[str(row['expected'])]
 
         def predict(row):
-            label, _ = classifier.predict(row['name'])
-            return label['name']
+            classification = classifier.predict(row['name'])
+            return classification['label']['name']
 
         df = pd.read_csv(self.input['predictions'])
         df['expected'] = df.apply(update_label, axis=1)

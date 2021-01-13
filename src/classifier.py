@@ -17,9 +17,9 @@ def predict(filename):
         persistence.bin_to_obj('models/classifier_mdl.pickle'),
         persistence.json_to_obj('data/processed/label_dictionary.json')
     )
-    label, confidence = classifier.predict(filename)
+    classification = classifier.predict(filename)
 
-    return (label, confidence)
+    return (classification['label'], classification['probability'])
 
 def predict_and_print(filename):
     ''' Makes a prediction using the classification model and prints the result.
