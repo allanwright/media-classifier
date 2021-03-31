@@ -27,5 +27,13 @@ class Pipeline():
         '''Runs the pipeline.
 
         '''
+        output = {}
         for step in self.steps:
+            step.input.update(output)
+            print(step.input)
             step.run()
+            output.update(self.__get_step_output(step))
+
+    def __get_step_output(self, step):
+        step_name = step.__class__.__name__
+        return {step_name + '_' + k: v for (k, v) in step.output.items()}
