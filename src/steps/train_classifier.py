@@ -25,7 +25,6 @@ class TrainClassifier(Step):
         self.input = {
         }
         self.output = {
-            'model_dir': 'models/',
             'results_dir': 'models/classifier/%s/',
             'vectorizer': 'classifier_vec.pickle',
             'model': 'classifier_mdl.pickle',
@@ -53,15 +52,13 @@ class TrainClassifier(Step):
 
         classifier.fit(x_train, y_train)
 
-        output_dir = self.output['results_dir'] % timestamp
+        self.output['results_dir'] = self.output['results_dir'] % timestamp
+        output_dir = self.output['results_dir']
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
 
         self.__score_model(classifier, x_eval, y_eval, 'eval', timestamp)
         self.__score_model(classifier, x_test, y_test, 'test', timestamp)
-
-        persistence.obj_to_bin(vectorizer, self.output['model_dir'] + self.output['vectorizer'])
-        persistence.obj_to_bin(classifier, self.output['model_dir'] + self.output['model'])
 
         persistence.obj_to_bin(vectorizer, output_dir + self.output['vectorizer'])
         persistence.obj_to_bin(classifier, output_dir + self.output['model'])

@@ -9,11 +9,11 @@ Usage:
     mc train-classifier
     mc train-ner
     mc promote --model <model> --id <model>
-    mc predict --model <model> --filename <filename>
+    mc predict --model <model> --filename <filename> [--id=<id>]
 
 Arguments:
     -m <model>, --model <model>             Type of model (classifier, ner)
-    -i <id>, --id <id>                      The model id
+    -i <id>, --id <id>                      The model id [default: latest]
     -f <filename>, --filename <filename>    The filename to evaluate
 
 Pipelines:

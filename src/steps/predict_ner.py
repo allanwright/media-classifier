@@ -14,4 +14,7 @@ class PredictNer(Step):
         '''Runs the pipeline step.
 
         '''
-        return ner.predict_and_print(self.input['--filename'])
+        filename = self.input['--filename']
+        model_id = self.input['--id']
+        self.print('Using model \'{model_id}\'', model_id=model_id)
+        return ner.predict_and_print(filename, model_id)

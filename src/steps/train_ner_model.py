@@ -2,6 +2,7 @@
 
 '''
 
+import datetime
 import random
 
 from spacy.util import minibatch, compounding
@@ -53,3 +54,6 @@ class TrainNerModel(Step):
                 #self.print(losses['ner'])
 
         persistence.obj_to_bin(nlp.to_bytes(), self.output['model'])
+
+    def __get_timestamp(self):
+        return datetime.datetime.today().strftime('%Y%m%dT%H%M%S')
