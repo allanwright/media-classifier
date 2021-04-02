@@ -29,8 +29,8 @@ class ValidateClassifier(Step):
         '''
         labels = persistence.json_to_obj(self.input['label_dict'])
         classifier = Classifier(
-            persistence.bin_to_obj(self.input['vectorizer']),
-            persistence.bin_to_obj(self.input['model']),
+            persistence.bin_to_obj(self.input['TrainClassifier_vectorizer']),
+            persistence.bin_to_obj(self.input['TrainClassifier_model']),
             labels
         )
 
