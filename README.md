@@ -11,36 +11,31 @@ Media-Classifier has a CLI for executing everything required to train and valida
 
 ```shell
 Usage:
-    mc aquire-train-data
-    mc aquire-test-data
-    mc process-data
-    mc process-classifier
-    mc process-ner
-    mc train-classifier
-    mc train-ner
-    mc promote --model <model>
-    mc predict --model <model> --filename <filename>
+    Usage:
+        mc aquire --source <source>
+        mc predict --model <model> --filename <filename> [--id <id>]
+        mc process [--model <model>]
+        mc promote --model <model> --id <model>
+        mc train --model <model>
 
-Arguments:
-    -m <model>, --model <model>             Type of model (classifier, ner)
-    -f <filename>, --filename <filename>    The filename to evaluate
+    Arguments:
+        -s <source>, --source <source>          Data source (kraken, pig, test, xerus, yak)
+        -m <model>, --model <model>             Type of model (classifier, ner)
+        -i <id>, --id <id>                      The model id [default: latest]
+        -f <filename>, --filename <filename>    The filename to evaluate
 
-Pipelines:
-    aquire-train-data       Aquires training data
-    aquire-test-data        Aquires test data
-    process-data            Merges and processes training and test data for all models
-    process-classifier      Process training and test data used by the classification model
-    process-ner             Process training and test data used by the ner model
-    train-classifier        Trains the classification model
-    train-ner               Trains the ner model
-    promote                 Promotes a model to production
-    predict                 Uses a model to make a prediction
+    Pipelines:
+        aquire                  Aquires training or test data
+        predict                 Uses a model to make a prediction
+        process                 Processes training and test data
+        promote                 Promotes a model to production
+        train                   Trains a model
 ```
 
 ## Classifier
 The classifier is a multi class logistic regression model. I did expirment with a CNN with attention, but logistc regression proved to be just as effective, and required much less effort to implement.
 
-The raw training data currently weighs in at around 650k samples but a lot of unusable junk quickly cuts that down to around 450k samples. The training data is then augmented and classes balanced by undersampling over represented classes. An 80/20 split is used for training and validation data, leaving a total of 90k samples for training and validation. More data is aquired as model drift occurs and retraining is required.
+The raw training data currently weighs in at around 700k samples but a lot of unusable junk quickly cuts that down to around 450k samples. The training data is then augmented and classes balanced by undersampling over represented classes. An 80/20 split is used for training and validation data, leaving a total of 90k samples for training and validation. More data is aquired as model drift occurs and retraining is required.
 
 ## Named Entity Recognition
 The named entity recognition model is trained using Spacy on 500 samples. The reason for this is that unlike the classification data, all of the named entity recognition data needs to be human labelled, or at least human validated. After training the initial version of the model on 250 samples, I then used the model to label more training data, followed by manual verification.
