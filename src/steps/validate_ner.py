@@ -20,8 +20,7 @@ class ValidateNer(Step):
     def __init__(self):
         super(ValidateNer, self).__init__()
         self.input = {
-            'predictions': 'data/test/ner.csv',
-            'model': 'models/ner_mdl.pickle',
+            'predictions': 'data/test/ner.csv'
         }
 
     def run(self):
@@ -29,7 +28,7 @@ class ValidateNer(Step):
 
         '''
         nlp, _ = ner.get_model()
-        nlp.from_bytes(persistence.bin_to_obj(self.input['model']))
+        nlp.from_bytes(persistence.bin_to_obj(self.input['TrainNerModel_model']))
         recognizer = EntityRecognizer(nlp)
 
         def predict(row):

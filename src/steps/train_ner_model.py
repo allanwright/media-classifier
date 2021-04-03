@@ -3,6 +3,7 @@
 '''
 
 import datetime
+import os
 import random
 
 from spacy.util import minibatch, compounding
@@ -23,7 +24,8 @@ class TrainNerModel(Step):
             'train_data': 'data/processed/ner_labelled.pickle',
         }
         self.output = {
-            'model': 'models/ner_mdl.pickle',
+            'output_dir': 'models/ner/{timestamp}',
+            'model': '{output_dir}/ner_mdl.pickle'
         }
 
     def run(self):
@@ -52,6 +54,12 @@ class TrainNerModel(Step):
                     texts, annotations = zip(*batch)
                     nlp.update(texts, annotations, drop=0.5, losses=losses)
                 #self.print(losses['ner'])
+
+        output_dir = self.output['output_dir'].format(timestamp=self.__get_timestamp())
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+
+        self.output['model'] = self.output['model'].format(output_dir=output_dir)
 
         persistence.obj_to_bin(nlp.to_bytes(), self.output['model'])
 
