@@ -10,6 +10,6 @@ progressbar2
 rope
 numpy
 spacy==2.3.5
-https://github.com/allanwright/media-classifier-core/archive/v1.2.0.tar.gz
+https://github.com/allanwright/media-classifier-core/archive/v1.2.3.tar.gz
 azure-storage-queue
 azure-storage-blob
