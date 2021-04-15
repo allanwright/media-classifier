@@ -38,17 +38,18 @@ class GetTestData(Step):
             for message in batch:
                 filename = message.content
                 label, _ = classifier.predict(filename)
-                entities = ner.predict(filename)
                 self.print(
                     '\'{filename}\' classified as \'{label}\'',
                     filename=filename,
                     label=label['name'])
-                self.print(
-                    '\'{filename}\' has entities \'{entities}\'',
-                    filename=filename,
-                    entities=entities)
                 with open(self.output['classifier'], 'a') as f:
                     f.write(message.content + ',' + str(label['id']) + '\n')
-                with open(self.output['ner'], 'a') as f:
-                    f.write(message.content + ',\"' + str(entities) + '\"\n')
+                if label['name'] != 'other':
+                    entities = ner.predict(filename)
+                    self.print(
+                        '\'{filename}\' has entities \'{entities}\'',
+                        filename=filename,
+                        entities=entities)
+                    with open(self.output['ner'], 'a') as f:
+                        f.write(message.content + ',\"' + str(entities) + '\"\n')
                 queue.delete_message(message)
