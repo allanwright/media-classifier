@@ -30,7 +30,6 @@ class Pipeline():
         output = {}
         for step in self.steps:
             step.input.update(output)
-            print(step.input)
             step.run()
             output.update(self.__get_step_output(step))
 
